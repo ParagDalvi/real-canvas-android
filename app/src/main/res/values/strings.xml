@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Canvas</string>
+    <string name="create_join_lobby">Create/Join Lobby</string>
+    <string name="username">Username</string>
+    <string name="lobby_code">Lobby code</string>
+    <string name="create_join">Create/Join</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>
