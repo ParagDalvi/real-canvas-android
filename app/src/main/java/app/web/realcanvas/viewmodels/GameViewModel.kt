@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.web.realcanvas.models.*
 import app.web.realcanvas.remote.SocketService
+import app.web.realcanvas.util.RESET
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.websocket.*
@@ -21,8 +22,11 @@ class GameViewModel : ViewModel() {
     private val _lobby: MutableLiveData<Lobby?> = MutableLiveData()
     val lobby: LiveData<Lobby?> get() = _lobby
 
-    private val _gameState: MutableLiveData<GameState> = MutableLiveData()
+    private val _gameState: MutableLiveData<GameState> = MutableLiveData(GameState.OUT)
     val gameState: LiveData<GameState> get() = _gameState
+
+    private val _toast: MutableLiveData<String> = MutableLiveData()
+    val toast: LiveData<String> get() = _toast
 
     private lateinit var client: HttpClient
     private lateinit var socket: WebSocketSession
@@ -77,7 +81,17 @@ class GameViewModel : ViewModel() {
         val change = Json.decodeFromString<Change>(json)
         when (change.type) {
             ChangeType.LOBBY_UPDATE -> updateLobby(change)
+            ChangeType.ERROR -> handleError(change)
             else -> {}
+        }
+    }
+
+    private fun handleError(change: Change) {
+        val error = change.errorData!!
+        _toast.value = error.displayMessage
+        if (error.doWhat == RESET) {
+            if (gameState.value != GameState.OUT)
+                _gameState.value = GameState.OUT
         }
     }
 
