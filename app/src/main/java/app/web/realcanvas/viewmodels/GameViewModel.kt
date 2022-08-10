@@ -30,7 +30,6 @@ class GameViewModel : ViewModel() {
 
     private lateinit var client: HttpClient
     private lateinit var socket: WebSocketSession
-    private val json = Json { encodeDefaults = true }
 
     companion object {
         const val TAG = "GameViewModel"
@@ -48,7 +47,7 @@ class GameViewModel : ViewModel() {
                 ) {
                     socket = this
                     val request = createOrJoin(userName, lobbyId)
-                    send(json.encodeToString(request))
+                    send(Json.encodeToString(request))
                     for (frame in incoming) {
                         frame as? Frame.Text ?: continue
                         val json = frame.readText()
