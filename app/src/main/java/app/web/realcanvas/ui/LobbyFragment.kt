@@ -30,7 +30,7 @@ class LobbyFragment : Fragment() {
 
     private fun observe() {
         gameViewModel.lobby.observe(viewLifecycleOwner) {
-            lobbyAdapter.updatePlayers(it?.players?.values?.toList() ?: emptyList())
+            it?.players?.values?.toList()?.let { it1 -> lobbyAdapter.updatePlayers(it1) }
         }
     }
 

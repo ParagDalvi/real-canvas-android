@@ -19,6 +19,8 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 class GameViewModel : ViewModel() {
+    var currentPlayer: Player? = null
+
     private val _lobby: MutableLiveData<Lobby?> = MutableLiveData()
     val lobby: LiveData<Lobby?> get() = _lobby
 
@@ -48,6 +50,7 @@ class GameViewModel : ViewModel() {
                     socket = this
                     val request = createOrJoin(userName, lobbyId)
                     send(Json.encodeToString(request))
+                    currentPlayer = Player(userName, lobbyId != null)
                     for (frame in incoming) {
                         frame as? Frame.Text ?: continue
                         val json = frame.readText()
@@ -95,6 +98,7 @@ class GameViewModel : ViewModel() {
     }
 
     private fun updateLobby(change: Change) {
+        currentPlayer = change.lobbyUpdateData!!.players[currentPlayer?.userName]
         _lobby.value = change.lobbyUpdateData
 
         // navigate if required
@@ -106,6 +110,18 @@ class GameViewModel : ViewModel() {
             else -> {
                 Log.e(TAG, "updateLobby: Did not find GameState")
             }
+        }
+    }
+
+    fun sendMessage(message: Message) {
+        if (lobby.value == null) return
+        viewModelScope.launch {
+            _lobby.value?.messages?.add(message)
+            val returnChange = Change(
+                type = ChangeType.LOBBY_UPDATE,
+                lobbyUpdateData = lobby.value
+            )
+            socket.send(Json.encodeToString(returnChange))
         }
     }
 }

@@ -43,7 +43,7 @@ class MainActivity : AppCompatActivity() {
             }
             GameState.OUT -> {
                 // todo: disconnect and remove data
-                onBackPressed()
+//                onBackPressed()
             }
             else -> {
 
