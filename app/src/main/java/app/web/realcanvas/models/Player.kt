@@ -5,4 +5,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Player(
     val userName: String,
+    val isAdmin: Boolean
 )

@@ -1,17 +1,21 @@
 package app.web.realcanvas.ui
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import app.web.realcanvas.R
+import app.web.realcanvas.ui.adapters.LobbyAdapter
 import app.web.realcanvas.viewmodels.GameViewModel
 
 class LobbyFragment : Fragment() {
     private lateinit var gameViewModel: GameViewModel
+    private lateinit var rvLobby: RecyclerView
+    private lateinit var lobbyAdapter: LobbyAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -19,11 +23,21 @@ class LobbyFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_lobby, container, false)
         gameViewModel = ViewModelProvider(requireActivity())[GameViewModel::class.java]
-
-        gameViewModel.lobby.observe(viewLifecycleOwner) {
-            view.findViewById<TextView>(R.id.temp).text = it.toString()
-        }
-
+        initUi(view)
+        observe()
         return view
+    }
+
+    private fun observe() {
+        gameViewModel.lobby.observe(viewLifecycleOwner) {
+            lobbyAdapter.updatePlayers(it?.players?.values?.toList() ?: emptyList())
+        }
+    }
+
+    private fun initUi(view: View) {
+        rvLobby = view.findViewById(R.id.rv_lobby)
+        lobbyAdapter = LobbyAdapter(listOf())
+        rvLobby.adapter = lobbyAdapter
+        rvLobby.layoutManager = LinearLayoutManager(context)
     }
 }
