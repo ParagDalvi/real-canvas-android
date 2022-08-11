@@ -2,6 +2,7 @@ package app.web.realcanvas
 
 import android.os.Bundle
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
@@ -28,6 +29,35 @@ class MainActivity : AppCompatActivity() {
         observe()
     }
 
+    override fun onBackPressed() {
+        val currentFragID = navController.currentDestination?.id ?: return
+        if (currentFragID == R.id.homeFragment) {
+            super.onBackPressed()
+            return
+        }
+        leaveDialog()
+    }
+
+    private fun leaveDialog() {
+        AlertDialog.Builder(this)
+            .setTitle(getString(R.string.exit_lobby))
+            .setMessage(getString(R.string.exit_lobby_message))
+            .setPositiveButton(android.R.string.ok) { _, _ -> disconnect() }
+            .setNegativeButton(android.R.string.cancel, null)
+            .setIcon(android.R.drawable.ic_dialog_alert)
+            .show()
+    }
+
+    private fun disconnect() {
+        val currentFragID = navController.currentDestination?.id ?: return
+        viewModel.disconnect()
+        if (currentFragID == R.id.gameFragment) {
+            navController.navigate(R.id.action_gameFragment_to_homeFragment)
+        } else if (currentFragID == R.id.lobbyFragment) {
+            navController.navigate(R.id.action_lobbyFragment_to_homeFragment)
+        }
+    }
+
     private fun observe() {
         viewModel.lobby.observe(this) { it?.gameState?.let { it1 -> goTo(it1) } }
         viewModel.toast.observe(this) {
@@ -46,16 +76,14 @@ class MainActivity : AppCompatActivity() {
                 if (gameState == GameState.IN_GAME)
                     navController.navigate(R.id.action_lobbyFragment_to_gameFragment)
                 else if (gameState == GameState.OUT) {
-                    // disconnect
-                    navController.navigate(R.id.action_lobbyFragment_to_homeFragment)
+                    disconnect()
                 }
             }
             R.id.gameFragment -> {
                 if (gameState == GameState.LOBBY)
                     navController.navigate(R.id.action_gameFragment_to_lobbyFragment)
                 else if (gameState == GameState.OUT) {
-                    // disconnect
-                    navController.navigate(R.id.action_gameFragment_to_homeFragment)
+                    disconnect()
                 }
             }
         }

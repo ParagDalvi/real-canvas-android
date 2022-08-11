@@ -21,7 +21,9 @@
         tools:layout="@layout/fragment_lobby" >
         <action
             android:id="@+id/action_lobbyFragment_to_homeFragment"
-            app:destination="@id/homeFragment" />
+            app:destination="@id/homeFragment"
+            app:popUpTo="@+id/homeFragment"
+            app:popUpToInclusive="true"/>
         <action
             android:id="@+id/action_lobbyFragment_to_gameFragment"
             app:destination="@id/gameFragment" />
@@ -33,7 +35,9 @@
         tools:layout="@layout/fragment_game" >
         <action
             android:id="@+id/action_gameFragment_to_homeFragment"
-            app:destination="@id/homeFragment" />
+            app:destination="@id/homeFragment"
+            app:popUpTo="@+id/homeFragment"
+            app:popUpToInclusive="true"/>
         <action
             android:id="@+id/action_gameFragment_to_lobbyFragment"
             app:destination="@id/lobbyFragment" />

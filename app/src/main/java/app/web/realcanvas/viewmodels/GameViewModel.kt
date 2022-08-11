@@ -123,4 +123,22 @@ class GameViewModel : ViewModel() {
             }
         }
     }
+
+    fun disconnect() {
+        if (lobby.value == null || currentPlayer == null) return
+        viewModelScope.launch {
+            val returnChange = Change(
+                type = ChangeType.DISCONNECT,
+                disconnectData = DisconnectData(lobby.value!!.id, currentPlayer!!.userName)
+            )
+            socket.send(Json.encodeToString(returnChange))
+            clearData()
+        }
+    }
+
+    private suspend fun clearData() {
+        socket.close()
+        _lobby.value = null
+        currentPlayer = null
+    }
 }
