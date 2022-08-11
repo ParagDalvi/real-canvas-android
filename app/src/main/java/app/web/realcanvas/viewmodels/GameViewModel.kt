@@ -109,4 +109,18 @@ class GameViewModel : ViewModel() {
             socket.send(Json.encodeToString(returnChange))
         }
     }
+
+    fun startGame() {
+        if (lobby.value == null) return
+        viewModelScope.launch {
+            viewModelScope.launch {
+                _lobby.value?.gameState = GameState.IN_GAME
+                val returnChange = Change(
+                    type = ChangeType.LOBBY_UPDATE,
+                    lobbyUpdateData = lobby.value
+                )
+                socket.send(Json.encodeToString(returnChange))
+            }
+        }
+    }
 }

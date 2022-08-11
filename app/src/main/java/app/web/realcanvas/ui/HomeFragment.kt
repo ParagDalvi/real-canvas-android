@@ -53,7 +53,7 @@ class HomeFragment : Fragment() {
             return
         }
 
-        if (userName.length < 2) {
+        if (userName.length <= 2) {
             Toast.makeText(context, "Please enter at least 3 letters", Toast.LENGTH_SHORT).show()
             return
         }
