@@ -24,9 +24,6 @@ class GameViewModel : ViewModel() {
     private val _lobby: MutableLiveData<Lobby?> = MutableLiveData()
     val lobby: LiveData<Lobby?> get() = _lobby
 
-    private val _gameState: MutableLiveData<GameState> = MutableLiveData(GameState.OUT)
-    val gameState: LiveData<GameState> get() = _gameState
-
     private val _toast: MutableLiveData<String> = MutableLiveData()
     val toast: LiveData<String> get() = _toast
 
@@ -92,25 +89,13 @@ class GameViewModel : ViewModel() {
         val error = change.errorData!!
         _toast.value = error.displayMessage
         if (error.doWhat == RESET) {
-            if (gameState.value != GameState.OUT)
-                _gameState.value = GameState.OUT
+            _lobby.value = lobby.value?.copy(gameState = GameState.OUT)
         }
     }
 
     private fun updateLobby(change: Change) {
         currentPlayer = change.lobbyUpdateData!!.players[currentPlayer?.userName]
         _lobby.value = change.lobbyUpdateData
-
-        // navigate if required
-        when (change.gameState) {
-            GameState.LOBBY -> {
-                if (gameState.value != GameState.LOBBY)
-                    _gameState.value = GameState.LOBBY
-            }
-            else -> {
-                Log.e(TAG, "updateLobby: Did not find GameState")
-            }
-        }
     }
 
     fun sendMessage(message: Message) {

@@ -6,5 +6,6 @@ import kotlinx.serialization.Serializable
 data class Lobby(
     val id: String,
     val players: MutableMap<String, Player>,
-    val messages: MutableList<Message>
+    val messages: MutableList<Message>,
+    val gameState: GameState
 )

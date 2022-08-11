@@ -13,7 +13,6 @@ data class Change(
     val joinData: JoinData? = null,
     val disconnectData: DisconnectData? = null,
     val lobbyUpdateData: Lobby? = null,
-    val gameState: GameState? = null,
     val errorData: ErrorData? = null
 )
 
