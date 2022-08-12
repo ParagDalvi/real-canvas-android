@@ -27,6 +27,9 @@ class GameViewModel : ViewModel() {
     private val _toast: MutableLiveData<String> = MutableLiveData()
     val toast: LiveData<String> get() = _toast
 
+    private val _screen: MutableLiveData<Screen> = MutableLiveData(Screen.HOME)
+    val screen: LiveData<Screen> get() = _screen
+
     private lateinit var client: HttpClient
     private lateinit var socket: WebSocketSession
 
@@ -47,7 +50,7 @@ class GameViewModel : ViewModel() {
                     socket = this
                     val request = createOrJoin(userName, lobbyId)
                     send(Json.encodeToString(request))
-                    currentPlayer = Player(userName, lobbyId != null)
+                    currentPlayer = Player(userName, lobbyId != null, false)
                     for (frame in incoming) {
                         frame as? Frame.Text ?: continue
                         val json = frame.readText()
@@ -89,22 +92,38 @@ class GameViewModel : ViewModel() {
         val error = change.errorData!!
         _toast.value = error.displayMessage
         if (error.doWhat == RESET) {
-            _lobby.value = lobby.value?.copy(gameState = GameState.OUT)
+            _screen.value = Screen.HOME
         }
     }
 
     private fun updateLobby(change: Change) {
-        currentPlayer = change.lobbyUpdateData!!.players[currentPlayer?.userName]
-        _lobby.value = change.lobbyUpdateData
+        currentPlayer = change.lobbyUpdateData!!.data.players[currentPlayer?.userName]
+        _lobby.value = change.lobbyUpdateData.data
+        navigate(lobby.value?.whatsHappening)
+    }
+
+    private fun navigate(whatsHappening: WhatsHappening?) {
+        when (whatsHappening) {
+            WhatsHappening.WAITING -> _screen.value = Screen.LOBBY
+            WhatsHappening.DRAWING -> _screen.value = Screen.GAME
+            WhatsHappening.CHOOSING -> _screen.value = Screen.GAME
+            else -> _screen.value = Screen.HOME
+        }
     }
 
     fun sendMessage(message: Message) {
         if (lobby.value == null) return
         viewModelScope.launch {
-            _lobby.value?.messages?.add(message)
+//            _lobby.value?.messages?.add(message)
             val returnChange = Change(
                 type = ChangeType.LOBBY_UPDATE,
-                lobbyUpdateData = lobby.value
+                lobbyUpdateData = LobbyUpdateData(
+                    Lobby.addMessage,
+                    lobby.value!!.copy(
+                        messages = mutableListOf(message),
+                        players = mutableMapOf()
+                    )
+                )
             )
             socket.send(Json.encodeToString(returnChange))
         }
@@ -113,14 +132,19 @@ class GameViewModel : ViewModel() {
     fun startGame() {
         if (lobby.value == null) return
         viewModelScope.launch {
-            viewModelScope.launch {
-                _lobby.value?.gameState = GameState.IN_GAME
-                val returnChange = Change(
-                    type = ChangeType.LOBBY_UPDATE,
-                    lobbyUpdateData = lobby.value
+//            _lobby.value?.whatsHappening = WhatsHappening.CHOOSING
+            val returnChange = Change(
+                type = ChangeType.LOBBY_UPDATE,
+                lobbyUpdateData = LobbyUpdateData(
+                    Lobby.whatsHappening,
+                    lobby.value!!.copy(
+                        messages = mutableListOf(),
+                        players = mutableMapOf(),
+                        whatsHappening = WhatsHappening.CHOOSING
+                    )
                 )
-                socket.send(Json.encodeToString(returnChange))
-            }
+            )
+            socket.send(Json.encodeToString(returnChange))
         }
     }
 
