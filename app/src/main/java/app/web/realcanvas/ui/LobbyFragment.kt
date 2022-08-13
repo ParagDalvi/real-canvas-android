@@ -8,18 +8,22 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import app.web.realcanvas.R
 import app.web.realcanvas.models.Player
 import app.web.realcanvas.ui.adapters.LobbyAdapter
 import app.web.realcanvas.viewmodels.GameViewModel
+import com.google.android.material.textview.MaterialTextView
 
 class LobbyFragment : Fragment() {
     private lateinit var gameViewModel: GameViewModel
     private lateinit var rvLobby: RecyclerView
     private lateinit var lobbyAdapter: LobbyAdapter
     private lateinit var btnStart: Button
+    private lateinit var tvLobbyCode: MaterialTextView
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -50,16 +54,23 @@ class LobbyFragment : Fragment() {
     }
 
     private fun initUi(view: View) {
+        tvLobbyCode = view.findViewById(R.id.tv_lobby_code)
+        tvLobbyCode.text = getLobbyText()
         btnStart = view.findViewById(R.id.btn_start)
         btnStart.setOnClickListener { startGame() }
         rvLobby = view.findViewById(R.id.rv_lobby)
-        lobbyAdapter = LobbyAdapter(listOf())
+        lobbyAdapter = LobbyAdapter(listOf(), gameViewModel.currentPlayer)
         rvLobby.adapter = lobbyAdapter
-        rvLobby.layoutManager = LinearLayoutManager(context)
+        rvLobby.layoutManager = GridLayoutManager(context, 2)
+    }
+
+    private fun getLobbyText(): String? {
+        if (gameViewModel.lobby.value == null) return null
+        return "Lobby code: ${gameViewModel.lobby.value!!.id}"
     }
 
     private fun startGame() {
-        if(gameViewModel.lobby.value?.players?.size!! < 2) {
+        if (gameViewModel.lobby.value?.players?.size!! < 2) {
             Toast.makeText(context, "Need at least 2 players", Toast.LENGTH_SHORT).show()
             return
         }
