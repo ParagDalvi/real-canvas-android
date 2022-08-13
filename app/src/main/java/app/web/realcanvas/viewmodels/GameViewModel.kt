@@ -114,7 +114,6 @@ class GameViewModel : ViewModel() {
     fun sendMessage(message: Message) {
         if (lobby.value == null) return
         viewModelScope.launch {
-//            _lobby.value?.messages?.add(message)
             val returnChange = Change(
                 type = ChangeType.LOBBY_UPDATE,
                 lobbyUpdateData = LobbyUpdateData(
@@ -132,7 +131,6 @@ class GameViewModel : ViewModel() {
     fun startGame() {
         if (lobby.value == null) return
         viewModelScope.launch {
-//            _lobby.value?.whatsHappening = WhatsHappening.CHOOSING
             val returnChange = Change(
                 type = ChangeType.LOBBY_UPDATE,
                 lobbyUpdateData = LobbyUpdateData(

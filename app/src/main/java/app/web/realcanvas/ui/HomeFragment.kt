@@ -5,17 +5,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import app.web.realcanvas.R
 import app.web.realcanvas.viewmodels.GameViewModel
+import com.google.android.material.textfield.TextInputLayout
 
 class HomeFragment : Fragment() {
     private lateinit var gameViewModel: GameViewModel
-    private lateinit var etUserName: EditText
-    private lateinit var etCode: EditText
+    private lateinit var etUserName: TextInputLayout
+    private lateinit var etCode: TextInputLayout
     private lateinit var btnCreateOrJoin: Button
 
     override fun onCreateView(
@@ -45,8 +45,8 @@ class HomeFragment : Fragment() {
     }
 
     private fun createOrJoin() {
-        val userName = etUserName.text.toString().trim()
-        val code = etCode.text.toString().trim()
+        val userName = etUserName.editText?.text.toString().trim()
+        val code = etCode.editText?.text.toString().trim()
 
         if (userName.isEmpty()) {
             Toast.makeText(context, "Please enter Username", Toast.LENGTH_SHORT).show()
