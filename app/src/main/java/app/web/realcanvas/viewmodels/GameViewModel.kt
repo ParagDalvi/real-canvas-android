@@ -97,9 +97,33 @@ class GameViewModel : ViewModel() {
     }
 
     private fun updateLobby(change: Change) {
-        currentPlayer = change.lobbyUpdateData!!.data.players[currentPlayer?.userName]
-        _lobby.value = change.lobbyUpdateData.data
-        navigate(lobby.value?.whatsHappening)
+        val receivedLobby = change.lobbyUpdateData!!.data
+        when (change.lobbyUpdateData.updateWhat) {
+            Lobby.all -> {
+                _lobby.value = receivedLobby
+                updateCurrentPlayer(receivedLobby.players[currentPlayer?.userName])
+                navigate(receivedLobby.whatsHappening)
+            }
+            Lobby.addMessage -> {
+                _lobby.value?.messages?.add(receivedLobby.messages[0])
+                _lobby.value = lobby.value
+            }
+            Lobby.whatsHappening -> {
+                _lobby.value?.whatsHappening = receivedLobby.whatsHappening
+                navigate(receivedLobby.whatsHappening)
+            }
+            Lobby.player -> {
+                val receivedPlayer = receivedLobby.players.values.first()
+                _lobby.value?.players?.set(receivedPlayer.userName, receivedPlayer)
+                _lobby.value = lobby.value
+                if (receivedPlayer.userName == currentPlayer?.userName)
+                    updateCurrentPlayer(receivedPlayer)
+            }
+        }
+    }
+
+    private fun updateCurrentPlayer(player: Player?) {
+        currentPlayer = player
     }
 
     private fun navigate(whatsHappening: WhatsHappening?) {
