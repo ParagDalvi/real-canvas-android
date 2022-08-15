@@ -14,7 +14,7 @@
         app:cardBackgroundColor="@color/canvas"
         app:cardElevation="8dp"
         app:contentPadding="16dp"
-        app:layout_constraintBottom_toTopOf="@id/rv_lobby"
+        app:layout_constraintBottom_toTopOf="@id/tabLayout"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -47,38 +47,39 @@
 
     </com.google.android.material.card.MaterialCardView>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_lobby"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginTop="16dp"
-        app:layout_constraintBottom_toTopOf="@id/frag_message"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/card_lobby_info" />
 
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/frag_message"
-        android:name="app.web.realcanvas.ui.MessageFragment"
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:background="@color/color_primary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/card_lobby_info"
+        app:tabIndicatorColor="@color/white"
+        app:tabTextColor="@color/white">
+
+    </com.google.android.material.tabs.TabLayout>
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/viewpager"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toTopOf="@id/btn_start"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/rv_lobby" />
+        app:layout_constraintTop_toBottomOf="@id/tabLayout" />
 
     <Button
         android:id="@+id/btn_start"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/start"
         android:layout_margin="16dp"
+        android:text="@string/start"
         android:textAllCaps="false"
-        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/frag_message" />
+        app:layout_constraintRight_toRightOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

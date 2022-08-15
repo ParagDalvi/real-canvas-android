@@ -4,8 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
+import android.widget.ImageButton
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -15,6 +14,7 @@ import app.web.realcanvas.models.Message
 import app.web.realcanvas.models.MessageType
 import app.web.realcanvas.ui.adapters.MessageAdapter
 import app.web.realcanvas.viewmodels.GameViewModel
+import com.google.android.material.textfield.TextInputLayout
 
 class MessageFragment : Fragment() {
 
@@ -25,8 +25,8 @@ class MessageFragment : Fragment() {
     private lateinit var gameViewModel: GameViewModel
     private lateinit var rvMessage: RecyclerView
     private lateinit var adapter: MessageAdapter
-    private lateinit var btnSend: Button
-    private lateinit var etSend: EditText
+    private lateinit var btnSend: ImageButton
+    private lateinit var etSend: TextInputLayout
     private val maxChars = 100
 
     override fun onCreateView(
@@ -43,14 +43,19 @@ class MessageFragment : Fragment() {
 
     private fun observe() {
         gameViewModel.lobby.observe(viewLifecycleOwner) {
-            it?.messages?.let { it1 -> adapter.updateMessages(it1) }
+            it?.messages?.let { it1 ->
+//                if (adapter.messages.size != it1.size) {
+                    adapter.updateMessages(it1)
+                    rvMessage.scrollToPosition(it1.size - 1)
+//                }
+            }
         }
     }
 
     private fun initUi(view: View) {
         rvMessage = view.findViewById(R.id.rv_messages)
         etSend = view.findViewById(R.id.et_message)
-        adapter = MessageAdapter(listOf())
+        adapter = MessageAdapter(listOf(), gameViewModel.currentPlayer?.userName)
         rvMessage.adapter = adapter
         rvMessage.layoutManager = LinearLayoutManager(context)
         btnSend = view.findViewById(R.id.btn_send_message)
@@ -58,8 +63,8 @@ class MessageFragment : Fragment() {
     }
 
     private fun sendMessage() {
-        val msg = etSend.text.toString().trim()
-        etSend.text.clear()
+        val msg = etSend.editText?.text.toString().trim()
+        etSend.editText?.text?.clear()
         if (msg.isEmpty() || msg.length > maxChars) return
         if (gameViewModel.currentPlayer == null) return
         gameViewModel.sendMessage(

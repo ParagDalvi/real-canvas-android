@@ -10,11 +10,14 @@ import app.web.realcanvas.R
 import app.web.realcanvas.models.Message
 
 class MessageAdapter(
-    private var messages: List<Message>
+    var messages: List<Message>,
+    private val currentUserName: String?
 ) : RecyclerView.Adapter<MessageAdapter.ViewHolder>() {
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val tvMessage: TextView = view.findViewById(R.id.tv_message)
+        val tvInitials: TextView = view.findViewById(R.id.tv_initial)
+        val tvUsername: TextView = view.findViewById(R.id.tv_name)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -27,7 +30,23 @@ class MessageAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.tvMessage.text = messages[position].message
+        val message = messages[position]
+        if (currentUserName != null && currentUserName != message.userName) {
+            holder.tvInitials.visibility = View.VISIBLE
+            holder.tvMessage.text = message.message
+            holder.tvInitials.text = message.userName[0].uppercase()
+            holder.tvUsername.text = message.userName
+
+            holder.tvMessage.textAlignment = View.TEXT_ALIGNMENT_TEXT_START
+            holder.tvUsername.textAlignment = View.TEXT_ALIGNMENT_TEXT_START
+        } else {
+            holder.tvInitials.visibility = View.GONE
+            holder.tvMessage.text = message.message
+            holder.tvUsername.text = holder.tvUsername.context.getString(R.string.you)
+
+            holder.tvMessage.textAlignment = View.TEXT_ALIGNMENT_TEXT_END
+            holder.tvUsername.textAlignment = View.TEXT_ALIGNMENT_TEXT_END
+        }
     }
 
     override fun getItemCount(): Int = messages.size

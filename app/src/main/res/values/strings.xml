@@ -11,4 +11,9 @@
     <string name="exit_lobby_message">Are you sure you want to leave the game?</string>
     <string name="share">Share</string>
     <string name="remove">Remove</string>
+    <string name="players">Players</string>
+    <string name="messages">Messages</string>
+    <string name="scoreboard">Scoreboard</string>
+    <string name="message">Message</string>
+    <string name="you">You</string>
 </resources>

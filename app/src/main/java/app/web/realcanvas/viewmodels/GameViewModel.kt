@@ -20,6 +20,10 @@ import kotlinx.serialization.json.Json
 
 class GameViewModel : ViewModel() {
     var currentPlayer: Player? = null
+    var newMessage = false
+
+    private val _update: MutableLiveData<String> = MutableLiveData("")
+    val update: LiveData<String> get() = _update
 
     private val _lobby: MutableLiveData<Lobby?> = MutableLiveData()
     val lobby: LiveData<Lobby?> get() = _lobby
@@ -100,19 +104,24 @@ class GameViewModel : ViewModel() {
         val receivedLobby = change.lobbyUpdateData!!.data
         when (change.lobbyUpdateData.updateWhat) {
             Lobby.all -> {
+                _update.value = Lobby.all
                 _lobby.value = receivedLobby
                 updateCurrentPlayer(receivedLobby.players[currentPlayer?.userName])
                 navigate(receivedLobby.whatsHappening)
             }
             Lobby.addMessage -> {
+                _update.value = Lobby.addMessage
+                newMessage = true
                 _lobby.value?.messages?.add(receivedLobby.messages[0])
                 _lobby.value = lobby.value
             }
             Lobby.whatsHappening -> {
+                _update.value = Lobby.whatsHappening
                 _lobby.value?.whatsHappening = receivedLobby.whatsHappening
                 navigate(receivedLobby.whatsHappening)
             }
             Lobby.player -> {
+                _update.value = Lobby.player
                 val receivedPlayer = receivedLobby.players.values.first()
                 _lobby.value?.players?.set(receivedPlayer.userName, receivedPlayer)
                 _lobby.value = lobby.value
@@ -186,5 +195,10 @@ class GameViewModel : ViewModel() {
         socket.close()
         _lobby.value = null
         currentPlayer = null
+        newMessage = false
+    }
+
+    fun resetNewMessageFlag() {
+        newMessage = false
     }
 }

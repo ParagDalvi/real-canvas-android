@@ -12,7 +12,7 @@ import app.web.realcanvas.R
 import app.web.realcanvas.models.Player
 
 class LobbyAdapter(
-    private var players: List<Player>,
+    var players: List<Player>,
     private val currentPlayer: Player?
 ) : RecyclerView.Adapter<LobbyAdapter.ViewHolder>() {
 
