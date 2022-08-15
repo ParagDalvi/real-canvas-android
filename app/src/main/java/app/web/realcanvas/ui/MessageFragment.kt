@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import app.web.realcanvas.R
+import app.web.realcanvas.models.Lobby
 import app.web.realcanvas.models.Message
 import app.web.realcanvas.models.MessageType
 import app.web.realcanvas.ui.adapters.MessageAdapter
@@ -42,12 +43,13 @@ class MessageFragment : Fragment() {
     }
 
     private fun observe() {
-        gameViewModel.lobby.observe(viewLifecycleOwner) {
-            it?.messages?.let { it1 ->
-//                if (adapter.messages.size != it1.size) {
-                    adapter.updateMessages(it1)
-                    rvMessage.scrollToPosition(it1.size - 1)
-//                }
+        gameViewModel.update.observe(viewLifecycleOwner) {
+            if (it == Lobby.addMessage || it == Lobby.all) {
+                if (gameViewModel.currentLobby != null) {
+                    val messages = gameViewModel.currentLobby!!.messages
+                    adapter.updateMessages(messages)
+                    rvMessage.scrollToPosition(messages.size - 1)
+                }
             }
         }
     }

@@ -8,7 +8,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import app.web.realcanvas.models.Screen
-import app.web.realcanvas.models.WhatsHappening
 import app.web.realcanvas.viewmodels.GameViewModel
 
 class MainActivity : AppCompatActivity() {
@@ -78,13 +77,13 @@ class MainActivity : AppCompatActivity() {
             R.id.lobbyFragment -> {
                 if (screen == Screen.GAME)
                     navController.navigate(R.id.action_lobbyFragment_to_gameFragment)
-                else if(screen == Screen.HOME)
+                else if (screen == Screen.HOME)
                     navController.navigate(R.id.action_lobbyFragment_to_homeFragment)
             }
             R.id.gameFragment -> {
                 if (screen == Screen.LOBBY)
                     navController.navigate(R.id.action_gameFragment_to_lobbyFragment)
-                else if(screen == Screen.HOME)
+                else if (screen == Screen.HOME)
                     navController.navigate(R.id.action_gameFragment_to_homeFragment)
             }
         }

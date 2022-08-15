@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import app.web.realcanvas.R
+import app.web.realcanvas.models.Lobby
 import app.web.realcanvas.models.Player
 import app.web.realcanvas.viewmodels.GameViewModel
 import com.google.android.material.tabs.TabLayout
@@ -37,19 +38,21 @@ class LobbyFragment : Fragment() {
     }
 
     private fun observe() {
-        gameViewModel.lobby.observe(viewLifecycleOwner) {
-            updateUiIfAdmin(gameViewModel.currentPlayer)
-            showBadgeIfRequired(gameViewModel.newMessage)
+        gameViewModel.update.observe(viewLifecycleOwner) {
+            when (it) {
+                Lobby.all -> updateUiIfAdmin(gameViewModel.currentPlayer)
+                Lobby.player -> updateUiIfAdmin(gameViewModel.currentPlayer)
+                Lobby.addMessage -> showBadgeIfRequired()
+            }
         }
     }
 
-    private fun showBadgeIfRequired(newMessage: Boolean) {
+    private fun showBadgeIfRequired() {
         val currentTab = tabLayout.selectedTabPosition
-        if (newMessage && currentTab != 1) {
+        if (currentTab != 1) {
             val badge = tabLayout.getTabAt(1)?.orCreateBadge
             badge?.backgroundColor = ContextCompat.getColor(requireContext(), R.color.white)
-        } else
-            tabLayout.getTabAt(1)?.removeBadge()
+        }
     }
 
     private fun updateUiIfAdmin(currentPlayer: Player?) {
@@ -92,7 +95,6 @@ class LobbyFragment : Fragment() {
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 if (tab?.position == 1) {
                     tab.removeBadge()
-                    gameViewModel.resetNewMessageFlag()
                 }
             }
 
@@ -103,12 +105,12 @@ class LobbyFragment : Fragment() {
     }
 
     private fun getLobbyText(): String? {
-        if (gameViewModel.lobby.value == null) return null
-        return "Lobby code: ${gameViewModel.lobby.value!!.id}"
+        if (gameViewModel.currentLobby == null) return null
+        return "Lobby code: ${gameViewModel.currentLobby!!.id}"
     }
 
     private fun startGame() {
-        if (gameViewModel.lobby.value?.players?.size!! < 2) {
+        if (gameViewModel.currentLobby?.players?.size!! < 2) {
             Toast.makeText(context, "Need at least 2 players", Toast.LENGTH_SHORT).show()
             return
         }

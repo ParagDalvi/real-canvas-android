@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import app.web.realcanvas.R
+import app.web.realcanvas.models.Lobby
 import app.web.realcanvas.ui.adapters.LobbyAdapter
 import app.web.realcanvas.viewmodels.GameViewModel
 
@@ -30,10 +31,11 @@ class PlayersListFragment : Fragment() {
     }
 
     private fun observe() {
-        gameViewModel.lobby.observe(viewLifecycleOwner) {
-            it?.players?.values?.toList()?.let { it1 ->
-                if (it1.size != lobbyAdapter.players.size)
-                    lobbyAdapter.updatePlayers(it1)
+        gameViewModel.update.observe(viewLifecycleOwner) {
+            if (it == Lobby.player || it == Lobby.all) {
+                if (gameViewModel.currentLobby != null) {
+                    lobbyAdapter.updatePlayers(gameViewModel.currentLobby!!.players.values.toList())
+                }
             }
         }
     }
