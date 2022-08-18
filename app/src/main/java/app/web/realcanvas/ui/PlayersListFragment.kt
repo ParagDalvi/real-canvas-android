@@ -32,7 +32,7 @@ class PlayersListFragment : Fragment() {
 
     private fun observe() {
         gameViewModel.update.observe(viewLifecycleOwner) {
-            if (it == Lobby.player || it == Lobby.all) {
+            if (it == Lobby.players || it == Lobby.all) {
                 if (gameViewModel.currentLobby != null) {
                     lobbyAdapter.updatePlayers(gameViewModel.currentLobby!!.players.values.toList())
                 }

@@ -6,7 +6,7 @@
         <entry key="app/src/main/res/drawable/ic_star.xml" value="0.213" />
         <entry key="app/src/main/res/drawable/shape_circle.xml" value="0.1505" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.25" />
-        <entry key="app/src/main/res/layout/fragment_game.xml" value="0.10152740478515626" />
+        <entry key="app/src/main/res/layout/fragment_game.xml" value="0.25" />
         <entry key="app/src/main/res/layout/fragment_home.xml" value="0.24479166666666666" />
         <entry key="app/src/main/res/layout/fragment_lobby.xml" value="0.22554347826086957" />
         <entry key="app/src/main/res/layout/fragment_message.xml" value="0.2259963768115942" />

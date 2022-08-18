@@ -25,6 +25,9 @@ class GameViewModel : ViewModel() {
     private val _update: MutableLiveData<String> = MutableLiveData("")
     val update: LiveData<String> get() = _update
 
+    private val _drawingList: MutableLiveData<List<DrawPoints>> = MutableLiveData(listOf())
+    val drawingList: LiveData<List<DrawPoints>> get() = _drawingList
+
     private val _toast: MutableLiveData<String> = MutableLiveData()
     val toast: LiveData<String> get() = _toast
 
@@ -85,8 +88,14 @@ class GameViewModel : ViewModel() {
         when (change.type) {
             ChangeType.LOBBY_UPDATE -> updateLobby(change)
             ChangeType.ERROR -> handleError(change)
+            ChangeType.DRAWING -> handleDrawingPoints(change)
             else -> {}
         }
+    }
+
+    private fun handleDrawingPoints(change: Change) {
+        val data = change.drawingData!!
+        _drawingList.value = data.list
     }
 
     private fun handleError(change: Change) {
@@ -112,11 +121,12 @@ class GameViewModel : ViewModel() {
                 currentLobby?.whatsHappening = receivedLobby.whatsHappening
                 navigate(receivedLobby.whatsHappening)
             }
-            Lobby.player -> {
-                val receivedPlayer = receivedLobby.players.values.first()
-                currentLobby?.players?.set(receivedPlayer.userName, receivedPlayer)
-                if (receivedPlayer.userName == currentPlayer?.userName)
-                    updateCurrentPlayer(receivedPlayer)
+            Lobby.players -> {
+                currentLobby?.players = receivedLobby.players
+                updateCurrentPlayer(receivedLobby.players[currentPlayer?.userName])
+            }
+            Lobby.timer -> {
+                currentLobby?.timer = receivedLobby.timer
             }
         }
         _update.value = change.lobbyUpdateData.updateWhat

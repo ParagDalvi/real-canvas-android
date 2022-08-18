@@ -41,7 +41,7 @@ class LobbyFragment : Fragment() {
         gameViewModel.update.observe(viewLifecycleOwner) {
             when (it) {
                 Lobby.all -> updateUiIfAdmin(gameViewModel.currentPlayer)
-                Lobby.player -> updateUiIfAdmin(gameViewModel.currentPlayer)
+                Lobby.players -> updateUiIfAdmin(gameViewModel.currentPlayer)
                 Lobby.addMessage -> showBadgeIfRequired()
             }
         }

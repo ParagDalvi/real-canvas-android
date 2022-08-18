@@ -14,6 +14,7 @@ import app.web.realcanvas.models.DrawPoints
 
 
 class PaintView(context: Context, attrs: AttributeSet) : View(context, attrs) {
+    private var isDrawing = false
     private val defaultWidth = 20f
     private val pathList = ArrayList<DrawPath>()
     private val drawingPoints = ArrayList<DrawPoints>()
@@ -31,6 +32,34 @@ class PaintView(context: Context, attrs: AttributeSet) : View(context, attrs) {
         this.sendData = sendData
     }
 
+    fun setIsDrawing(b: Boolean) {
+        isDrawing = b
+    }
+
+    fun updateDrawing(list: List<DrawPoints>?) {
+        reset()
+        list?.forEach {
+            when (it.what) {
+                "move" -> {
+                    path.moveTo(it.x, it.y)
+                    pathList.add(DrawPath(currentBrush, path))
+                    invalidate()
+                }
+                "line" -> {
+                    path.lineTo(it.x, it.y)
+                    invalidate()
+                }
+            }
+        }
+    }
+
+    fun reset() {
+        pathList.clear()
+        drawingPoints.clear()
+        path.reset()
+        invalidate()
+    }
+
     override fun onDraw(canvas: Canvas) {
         pathList.forEach {
             paint.color = it.color
@@ -40,6 +69,8 @@ class PaintView(context: Context, attrs: AttributeSet) : View(context, attrs) {
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {
+        if (!isDrawing) return true
+
         val x = event.x
         val y = event.y
 

@@ -9,7 +9,7 @@ enum class WhatsHappening {
 @Serializable
 data class Lobby(
     val id: String,
-    val players: MutableMap<String, Player>,
+    var players: MutableMap<String, Player>,
     val messages: MutableList<Message>,
     var whatsHappening: WhatsHappening,
     var timer: Short,
@@ -19,7 +19,7 @@ data class Lobby(
         const val all = "all"
         const val addMessage = "addMessage"
         const val whatsHappening = "whatsHappening"
-        const val player = "player"
+        const val players = "players"
         const val timer = "timer"
         const val word = "word"
     }
