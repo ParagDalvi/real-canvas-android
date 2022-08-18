@@ -110,10 +110,10 @@ class LobbyFragment : Fragment() {
     }
 
     private fun startGame() {
-        if (gameViewModel.currentLobby?.players?.size!! < 2) {
-            Toast.makeText(context, "Need at least 2 players", Toast.LENGTH_SHORT).show()
-            return
-        }
+//        if (gameViewModel.currentLobby?.players?.size!! < 2) {
+//            Toast.makeText(context, "Need at least 2 players", Toast.LENGTH_SHORT).show()
+//            return
+//        }
 
         gameViewModel.startGame()
     }

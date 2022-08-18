@@ -187,4 +187,19 @@ class GameViewModel : ViewModel() {
         currentLobby = null
         currentPlayer = null
     }
+
+    fun sendDrawingPath(list: List<DrawPoints>) {
+        if (currentPlayer == null) return
+        viewModelScope.launch {
+            val change = Change(
+                ChangeType.DRAWING,
+                drawingData = DrawingData(
+                    currentLobby!!.id,
+                    currentPlayer!!.userName,
+                    list
+                )
+            )
+            socket.send(Json.encodeToString(change))
+        }
+    }
 }
