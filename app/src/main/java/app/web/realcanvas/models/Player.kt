@@ -6,5 +6,6 @@ import kotlinx.serialization.Serializable
 data class Player(
     val userName: String,
     val isAdmin: Boolean,
-    var isDrawing: Boolean
+    var isDrawing: Boolean,
+    var score: Int
 )

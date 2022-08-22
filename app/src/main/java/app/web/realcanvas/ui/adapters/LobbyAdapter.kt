@@ -18,6 +18,7 @@ class LobbyAdapter(
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val tvName: TextView = view.findViewById(R.id.tv_name)
+        val tvScore: TextView = view.findViewById(R.id.tv_score)
         val tvInitials: TextView = view.findViewById(R.id.tv_initial)
         val btnRemove: ImageButton = view.findViewById(R.id.btn_remove)
         val ivIsAdmin: ImageView = view.findViewById(R.id.iv_is_admin)
@@ -35,7 +36,12 @@ class LobbyAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val player = players[position]
         holder.tvName.text = player.userName
+
         holder.tvInitials.text = player.userName[0].toString().uppercase()
+
+        holder.tvScore.text = player.score.toString()
+        holder.tvScore.visibility = if (player.score == 0) View.GONE else View.VISIBLE
+
         if (currentPlayer?.isAdmin == true) {
             if (player.userName != currentPlayer.userName) {
                 holder.btnRemove.visibility = View.VISIBLE

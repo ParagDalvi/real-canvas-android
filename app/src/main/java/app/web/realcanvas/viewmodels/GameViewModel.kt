@@ -54,7 +54,7 @@ class GameViewModel : ViewModel() {
                     socket = this
                     val request = createOrJoin(userName, lobbyId)
                     send(Json.encodeToString(request))
-                    currentPlayer = Player(userName, lobbyId != null, false)
+                    currentPlayer = Player(userName, lobbyId != null, false, 0)
                     for (frame in incoming) {
                         frame as? Frame.Text ?: continue
                         val json = frame.readText()
