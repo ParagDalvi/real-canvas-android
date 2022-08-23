@@ -1,7 +1,6 @@
 package app.web.realcanvas.ui
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,7 +8,6 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import app.web.realcanvas.R
-import app.web.realcanvas.models.Lobby
 import app.web.realcanvas.models.WhatsHappening
 import app.web.realcanvas.viewmodels.GameViewModel
 import com.google.android.material.card.MaterialCardView
@@ -29,26 +27,14 @@ class GameFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_game, container, false)
         gameViewModel = ViewModelProvider(requireActivity())[GameViewModel::class.java]
         initUi(view)
-        setDrawingFlagForCurrentPlayer()
+        updateUiForCurrentPlayer()
         observe()
         return view
     }
 
     private fun observe() {
-        gameViewModel.update.observe(viewLifecycleOwner) {
-            Log.e("TAG", "observe: $it -> ${gameViewModel.currentLobby?.whatsHappening}")
-            when (it) {
-                Lobby.players -> handlePlayerChange()
-
-                Lobby.timer -> handleTimerChange()
-
-                Lobby.whatsHappening -> setDrawingFlagForCurrentPlayer()
-
-                Lobby.all -> {
-                    handleTimerChange()
-                    handlePlayerChange()
-                }
-            }
+        gameViewModel.currentLobby.observe(viewLifecycleOwner) {
+            updateUiForCurrentPlayer()
         }
 
         gameViewModel.drawingList.observe(viewLifecycleOwner) {
@@ -58,43 +44,43 @@ class GameFragment : Fragment() {
         }
     }
 
-    private fun handleTimerChange() {
-        tvTimer.text = gameViewModel.currentLobby?.timer.toString()
-    }
+    private fun updateUiForCurrentPlayer() {
+        if (gameViewModel.currentPlayer == null || gameViewModel.currentLobby.value == null) return
 
-    private fun handlePlayerChange() {
-        setDrawingFlagForCurrentPlayer()
-        if (gameViewModel.currentLobby?.whatsHappening == WhatsHappening.CHOOSING) {
-            paintView.reset()
-        }
-    }
-
-    private fun setDrawingFlagForCurrentPlayer() {
-        if (gameViewModel.currentPlayer?.isDrawing == true) {
-            paintView.setIsDrawing(true)
+        val isDrawing = gameViewModel.currentPlayer!!.isDrawing
+        if (isDrawing) {
+            if (gameViewModel.currentLobby.value!!.whatsHappening == WhatsHappening.CHOOSING) {
+                //todo: show dialog
+            } else {
+                isDrawingAndDrawingUi()
+            }
         } else {
-            paintView.setIsDrawing(false)
-            if (gameViewModel.currentLobby?.whatsHappening == WhatsHappening.CHOOSING)
-                setUpNoDrawChoosingUi()
-            else
-                setUpNoDrawGuessingUi()
+            if (gameViewModel.currentLobby.value!!.whatsHappening == WhatsHappening.CHOOSING) {
+                isNotDrawingAndChoosingUi()
+            } else {
+                isNotDrawingAndDrawingUi()
+            }
         }
     }
 
-    private fun setUpNoDrawGuessingUi() {
+    private fun isNotDrawingAndChoosingUi() {
+        viewNoDrawGuess.visibility = View.GONE
+
+        cardNoDrawChoosing.visibility = View.VISIBLE
+        val name =
+            gameViewModel.currentLobby.value!!.players.values.filter { it.isDrawing }[0].userName
+        val string = "$name is choosing a word"
+        tvPlayerChoosing.text = string
+        tvTimer.text = gameViewModel.currentLobby.value!!.timer.toString()
+    }
+
+    private fun isNotDrawingAndDrawingUi() {
         cardNoDrawChoosing.visibility = View.GONE
         cardNoDrawChoosing.visibility = View.VISIBLE
     }
 
-    private fun setUpNoDrawChoosingUi() {
-        if (gameViewModel.currentLobby == null) return
-        viewNoDrawGuess.visibility = View.GONE
+    private fun isDrawingAndDrawingUi() {
 
-        cardNoDrawChoosing.visibility = View.VISIBLE
-        val name = gameViewModel.currentLobby!!.players.values.filter { it.isDrawing }[0].userName
-        val string = "$name is choosing a word"
-        tvPlayerChoosing.text = string
-        tvTimer.text = gameViewModel.currentLobby!!.timer.toString()
     }
 
     private fun initUi(view: View) {

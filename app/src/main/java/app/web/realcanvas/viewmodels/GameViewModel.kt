@@ -20,13 +20,15 @@ import kotlinx.serialization.json.Json
 
 class GameViewModel : ViewModel() {
     var currentPlayer: Player? = null
-    var currentLobby: Lobby? = null
 
-    private val _update: MutableLiveData<String> = MutableLiveData("")
-    val update: LiveData<String> get() = _update
+    private val _currentLobby: MutableLiveData<Lobby?> = MutableLiveData(null)
+    val currentLobby: LiveData<Lobby?> get() = _currentLobby
 
     private val _drawingList: MutableLiveData<List<DrawPoints>> = MutableLiveData(listOf())
     val drawingList: LiveData<List<DrawPoints>> get() = _drawingList
+
+    private val _newMessage: MutableLiveData<Message> = MutableLiveData()
+    val newMessage: LiveData<Message> get() = _newMessage
 
     private val _toast: MutableLiveData<String> = MutableLiveData()
     val toast: LiveData<String> get() = _toast
@@ -89,8 +91,15 @@ class GameViewModel : ViewModel() {
             ChangeType.LOBBY_UPDATE -> updateLobby(change)
             ChangeType.ERROR -> handleError(change)
             ChangeType.DRAWING -> handleDrawingPoints(change)
+            ChangeType.MESSAGE -> handleNewMessage(change)
             else -> {}
         }
+    }
+
+    private fun handleNewMessage(change: Change) {
+        if (currentLobby.value == null || currentPlayer == null) return
+
+        _newMessage.value = change.messageData!!.message
     }
 
     private fun handleDrawingPoints(change: Change) {
@@ -107,37 +116,22 @@ class GameViewModel : ViewModel() {
     }
 
     private fun updateLobby(change: Change) {
-        val receivedLobby = change.lobbyUpdateData!!.data
-        when (change.lobbyUpdateData.updateWhat) {
-            Lobby.all -> {
-                currentLobby = receivedLobby
-                updateCurrentPlayer(receivedLobby.players[currentPlayer?.userName])
-                navigate(receivedLobby.whatsHappening)
-            }
-            Lobby.addMessage -> {
-                currentLobby?.messages?.add(receivedLobby.messages[0])
-            }
-            Lobby.whatsHappening -> {
-                currentLobby?.whatsHappening = receivedLobby.whatsHappening
-                navigate(receivedLobby.whatsHappening)
-            }
-            Lobby.players -> {
-                currentLobby?.players = receivedLobby.players
-                updateCurrentPlayer(receivedLobby.players[currentPlayer?.userName])
-            }
-            Lobby.timer -> {
-                currentLobby?.timer = receivedLobby.timer
-            }
+        val receivedLobby = change.lobbyUpdateData!!
+        _currentLobby.value = receivedLobby
+        updateCurrentPlayer()
+        navigate()
+    }
+
+    private fun updateCurrentPlayer() {
+        if (currentLobby.value == null) {
+            currentPlayer = null
+            return
         }
-        _update.value = change.lobbyUpdateData.updateWhat
+        currentPlayer = currentLobby.value!!.players[currentPlayer?.userName]
     }
 
-    private fun updateCurrentPlayer(player: Player?) {
-        currentPlayer = player
-    }
-
-    private fun navigate(whatsHappening: WhatsHappening?) {
-        when (whatsHappening) {
+    private fun navigate() {
+        when (currentLobby.value?.whatsHappening) {
             WhatsHappening.WAITING -> _screen.value = Screen.LOBBY
             WhatsHappening.DRAWING -> _screen.value = Screen.GAME
             WhatsHappening.CHOOSING -> _screen.value = Screen.GAME
@@ -146,46 +140,34 @@ class GameViewModel : ViewModel() {
     }
 
     fun sendMessage(message: Message) {
-        if (currentLobby == null) return
+        if (currentLobby.value == null) return
         viewModelScope.launch {
             val returnChange = Change(
-                type = ChangeType.LOBBY_UPDATE,
-                lobbyUpdateData = LobbyUpdateData(
-                    Lobby.addMessage,
-                    currentLobby!!.copy(
-                        messages = mutableListOf(message),
-                        players = mutableMapOf()
-                    )
-                )
+                type = ChangeType.MESSAGE,
+                messageData = MessageData(currentLobby.value!!.id, message)
             )
             socket.send(Json.encodeToString(returnChange))
         }
     }
 
     fun startGame() {
-        if (currentLobby == null) return
+        if (currentLobby.value == null) return
         viewModelScope.launch {
+            currentLobby.value!!.whatsHappening = WhatsHappening.CHOOSING
             val returnChange = Change(
                 type = ChangeType.LOBBY_UPDATE,
-                lobbyUpdateData = LobbyUpdateData(
-                    Lobby.whatsHappening,
-                    currentLobby!!.copy(
-                        messages = mutableListOf(),
-                        players = mutableMapOf(),
-                        whatsHappening = WhatsHappening.CHOOSING
-                    )
-                )
+                lobbyUpdateData = currentLobby.value
             )
             socket.send(Json.encodeToString(returnChange))
         }
     }
 
     fun disconnect() {
-        if (currentLobby == null || currentPlayer == null) return
+        if (currentLobby.value == null || currentPlayer == null) return
         viewModelScope.launch {
             val returnChange = Change(
                 type = ChangeType.DISCONNECT,
-                disconnectData = DisconnectData(currentLobby!!.id, currentPlayer!!.userName)
+                disconnectData = DisconnectData(currentLobby.value!!.id, currentPlayer!!.userName)
             )
             socket.send(Json.encodeToString(returnChange))
             clearData()
@@ -194,7 +176,7 @@ class GameViewModel : ViewModel() {
 
     private suspend fun clearData() {
         socket.close()
-        currentLobby = null
+        _currentLobby.value = null
         currentPlayer = null
     }
 
@@ -204,7 +186,7 @@ class GameViewModel : ViewModel() {
             val change = Change(
                 ChangeType.DRAWING,
                 drawingData = DrawingData(
-                    currentLobby!!.id,
+                    currentLobby.value!!.id,
                     currentPlayer!!.userName,
                     list
                 )

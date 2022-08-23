@@ -5,14 +5,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import app.web.realcanvas.R
-import app.web.realcanvas.models.Lobby
 import app.web.realcanvas.models.Player
 import app.web.realcanvas.viewmodels.GameViewModel
 import com.google.android.material.tabs.TabLayout
@@ -33,21 +31,19 @@ class LobbyFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_lobby, container, false)
         gameViewModel = ViewModelProvider(requireActivity())[GameViewModel::class.java]
         initUi(view)
+        updateUiIfAdmin(gameViewModel.currentPlayer)
         observe()
         return view
     }
 
     private fun observe() {
-        gameViewModel.update.observe(viewLifecycleOwner) {
-            when (it) {
-                Lobby.all -> updateUiIfAdmin(gameViewModel.currentPlayer)
-                Lobby.players -> updateUiIfAdmin(gameViewModel.currentPlayer)
-                Lobby.addMessage -> showBadgeIfRequired()
-            }
+        gameViewModel.currentLobby.observe(viewLifecycleOwner) {
+            updateUiIfAdmin(gameViewModel.currentPlayer)
         }
     }
 
     private fun showBadgeIfRequired() {
+        //todo: add another livedata
         val currentTab = tabLayout.selectedTabPosition
         if (currentTab != 1) {
             val badge = tabLayout.getTabAt(1)?.orCreateBadge
@@ -105,8 +101,8 @@ class LobbyFragment : Fragment() {
     }
 
     private fun getLobbyText(): String? {
-        if (gameViewModel.currentLobby == null) return null
-        return "Lobby code: ${gameViewModel.currentLobby!!.id}"
+        if (gameViewModel.currentLobby.value == null) return null
+        return "Lobby code: ${gameViewModel.currentLobby.value!!.id}"
     }
 
     private fun startGame() {

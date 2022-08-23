@@ -1,6 +1,5 @@
 package app.web.realcanvas.ui.adapters
 
-import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,7 +9,7 @@ import app.web.realcanvas.R
 import app.web.realcanvas.models.Message
 
 class MessageAdapter(
-    var messages: List<Message>,
+    val messages: MutableList<Message>,
     private val currentUserName: String?
 ) : RecyclerView.Adapter<MessageAdapter.ViewHolder>() {
 
@@ -51,9 +50,8 @@ class MessageAdapter(
 
     override fun getItemCount(): Int = messages.size
 
-    @SuppressLint("NotifyDataSetChanged")
-    fun updateMessages(messages: List<Message>) {
-        this.messages = messages
-        notifyDataSetChanged()
+    fun addMessage(message: Message) {
+        messages.add(message)
+        notifyItemInserted(messages.size - 1)
     }
 }
