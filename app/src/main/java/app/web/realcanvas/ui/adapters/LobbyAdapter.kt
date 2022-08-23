@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import app.web.realcanvas.R
@@ -21,7 +20,7 @@ class LobbyAdapter(
         val tvScore: TextView = view.findViewById(R.id.tv_score)
         val tvInitials: TextView = view.findViewById(R.id.tv_initial)
         val btnRemove: ImageButton = view.findViewById(R.id.btn_remove)
-        val ivIsAdmin: ImageView = view.findViewById(R.id.iv_is_admin)
+        val tvIsAdmin: TextView = view.findViewById(R.id.tv_admin)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -46,11 +45,13 @@ class LobbyAdapter(
             if (player.userName != currentPlayer.userName) {
                 holder.btnRemove.visibility = View.VISIBLE
                 holder.btnRemove.setOnClickListener { removePlayer(player) }
-                holder.ivIsAdmin.visibility = View.GONE
+
+                holder.tvIsAdmin.visibility = View.GONE
             }
         } else {
             holder.btnRemove.visibility = View.GONE
-            holder.ivIsAdmin.visibility = if (player.isAdmin) View.VISIBLE else View.GONE
+
+            holder.tvIsAdmin.visibility = if (player.isAdmin) View.VISIBLE else View.GONE
         }
     }
 

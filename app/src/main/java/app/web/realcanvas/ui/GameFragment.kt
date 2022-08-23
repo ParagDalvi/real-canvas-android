@@ -1,6 +1,7 @@
 package app.web.realcanvas.ui
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,11 +12,15 @@ import app.web.realcanvas.R
 import app.web.realcanvas.models.Lobby
 import app.web.realcanvas.models.WhatsHappening
 import app.web.realcanvas.viewmodels.GameViewModel
+import com.google.android.material.card.MaterialCardView
 
 class GameFragment : Fragment() {
     private lateinit var paintView: PaintView
     private lateinit var gameViewModel: GameViewModel
     private lateinit var tvTimer: TextView
+    private lateinit var cardNoDrawChoosing: MaterialCardView
+    private lateinit var tvPlayerChoosing: TextView
+    private lateinit var viewNoDrawGuess: MaterialCardView
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -31,10 +36,13 @@ class GameFragment : Fragment() {
 
     private fun observe() {
         gameViewModel.update.observe(viewLifecycleOwner) {
+            Log.e("TAG", "observe: $it -> ${gameViewModel.currentLobby?.whatsHappening}")
             when (it) {
                 Lobby.players -> handlePlayerChange()
 
                 Lobby.timer -> handleTimerChange()
+
+                Lobby.whatsHappening -> setDrawingFlagForCurrentPlayer()
 
                 Lobby.all -> {
                     handleTimerChange()
@@ -66,12 +74,35 @@ class GameFragment : Fragment() {
             paintView.setIsDrawing(true)
         } else {
             paintView.setIsDrawing(false)
+            if (gameViewModel.currentLobby?.whatsHappening == WhatsHappening.CHOOSING)
+                setUpNoDrawChoosingUi()
+            else
+                setUpNoDrawGuessingUi()
         }
+    }
+
+    private fun setUpNoDrawGuessingUi() {
+        cardNoDrawChoosing.visibility = View.GONE
+        cardNoDrawChoosing.visibility = View.VISIBLE
+    }
+
+    private fun setUpNoDrawChoosingUi() {
+        if (gameViewModel.currentLobby == null) return
+        viewNoDrawGuess.visibility = View.GONE
+
+        cardNoDrawChoosing.visibility = View.VISIBLE
+        val name = gameViewModel.currentLobby!!.players.values.filter { it.isDrawing }[0].userName
+        val string = "$name is choosing a word"
+        tvPlayerChoosing.text = string
+        tvTimer.text = gameViewModel.currentLobby!!.timer.toString()
     }
 
     private fun initUi(view: View) {
         tvTimer = view.findViewById(R.id.tv_timer)
         paintView = view.findViewById(R.id.paint_view)
         paintView.init(gameViewModel::sendDrawingPath)
+        cardNoDrawChoosing = view.findViewById(R.id.card_no_draw_choosing)
+        tvPlayerChoosing = view.findViewById(R.id.tv_player_choosing)
+        viewNoDrawGuess = view.findViewById(R.id.view_no_draw_guessing)
     }
 }

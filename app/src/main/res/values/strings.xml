@@ -16,4 +16,5 @@
     <string name="scoreboard">Scoreboard</string>
     <string name="message">Message</string>
     <string name="you">You</string>
+    <string name="admin">Admin</string>
 </resources>

@@ -52,16 +52,16 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-
-    <ImageView
-        android:id="@+id/iv_is_admin"
-        android:layout_width="44dp"
-        android:layout_height="44dp"
-        android:contentDescription="@string/remove"
-        android:src="@drawable/ic_star"
-        android:visibility="gone"
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/tv_admin"
+        style="@style/TextAppearance.AppCompat.Body2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/admin"
+        android:layout_marginStart="8dp"
+        android:textColor="@color/grey"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
