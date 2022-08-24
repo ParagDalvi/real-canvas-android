@@ -120,7 +120,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:visibility="visible"
+        android:visibility="gone"
         app:cardBackgroundColor="@color/canvas"
         app:cardElevation="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -146,43 +146,87 @@
                 android:layout_height="wrap_content"
                 android:text="@string/please_choose_a_word"
                 android:textAlignment="center"
-                app:layout_constraintBottom_toTopOf="@id/word1"
+                app:layout_constraintBottom_toTopOf="@id/tv_timer_is_choosing"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <Button
-                android:id="@+id/word1"
-                style="?attr/materialButtonOutlinedStyle"
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tv_timer_is_choosing"
+                style="@style/TextAppearance.MaterialComponents.Headline5"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                app:layout_constraintBottom_toTopOf="@id/word2"
+                android:textAlignment="center"
+                android:textColor="@color/grey"
+                app:layout_constraintBottom_toTopOf="@id/word1"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tv_choose_word" />
 
-            <Button
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/word1"
+                style="?attr/materialButtonOutlinedStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:checkable="true"
+                app:cardBackgroundColor="@color/canvas"
+                app:layout_constraintBottom_toTopOf="@id/word2"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_timer_is_choosing">
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/tv_word1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:textAlignment="center" />
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
                 android:id="@+id/word2"
                 style="?attr/materialButtonOutlinedStyle"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="8dp"
+                android:checkable="true"
+                app:cardBackgroundColor="@color/canvas"
                 app:layout_constraintBottom_toTopOf="@id/word3"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/word1" />
+                app:layout_constraintTop_toBottomOf="@id/word1">
 
-            <Button
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/tv_word2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:textAlignment="center" />
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
                 android:id="@+id/word3"
                 style="?attr/materialButtonOutlinedStyle"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="8dp"
+                android:checkable="true"
+                app:cardBackgroundColor="@color/canvas"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/word2" />
+                app:layout_constraintTop_toBottomOf="@id/word2">
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/tv_word3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:textAlignment="center" />
+
+            </com.google.android.material.card.MaterialCardView>
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

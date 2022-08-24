@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -23,11 +22,17 @@ class GameFragment : Fragment() {
     private lateinit var tvPlayerChoosing: TextView
     private lateinit var tvCommonWordAns: TextView
     private lateinit var tvTimerOnPaintCanvas: TextView
+    private lateinit var tvTimerWhenChoosing: TextView
     private lateinit var temp: TextView
     private lateinit var cardPaintingCanvas: MaterialCardView
-    private lateinit var word1: Button
-    private lateinit var word2: Button
-    private lateinit var word3: Button
+    private lateinit var tvWord1: TextView
+    private lateinit var cardWord1: MaterialCardView
+    private lateinit var tvWord2: TextView
+    private lateinit var cardWord2: MaterialCardView
+    private lateinit var tvWord3: TextView
+    private lateinit var cardWord3: MaterialCardView
+
+    private var currentlySelectedWord = 1
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -73,9 +78,15 @@ class GameFragment : Fragment() {
         }
 
         if (gameViewModel.currentLobby.value!!.whatsHappening == WhatsHappening.DRAWING && gameViewModel.currentLobby.value!!.timer.toInt() == 1) {
+            // drawing -> new player choosing
             showCommonWhatWasTheWordCard()
             paintView.setIsDrawing(false)
             paintView.reset()
+        }
+
+        if (gameViewModel.currentLobby.value!!.whatsHappening == WhatsHappening.CHOOSING && gameViewModel.currentLobby.value!!.timer.toInt() == 1) {
+            // choosing -> drawing
+            gameViewModel.updateSelectedWord(currentlySelectedWord)
         }
     }
 
@@ -84,7 +95,7 @@ class GameFragment : Fragment() {
         cardIsNotDrawingAndChoosing.visibility = View.GONE
         cardIsDrawingAndChoosing.visibility = View.GONE
         cardCommonWhatWasTheWord.visibility = View.VISIBLE
-        val string = "Word was ${gameViewModel.currentLobby.value!!.word}"
+        val string = "Word was ${gameViewModel.currentLobby.value!!.selectedWord}"
         tvCommonWordAns.text = string
     }
 
@@ -93,9 +104,10 @@ class GameFragment : Fragment() {
         cardIsNotDrawingAndChoosing.visibility = View.GONE
         cardCommonWhatWasTheWord.visibility = View.GONE
         cardIsDrawingAndChoosing.visibility = View.VISIBLE
-        word1.text = gameViewModel.currentLobby.value!!.word
-        word2.text = gameViewModel.currentLobby.value!!.word
-        word3.text = gameViewModel.currentLobby.value!!.word
+        tvWord1.text = gameViewModel.currentLobby.value!!.words[0]
+        tvWord2.text = gameViewModel.currentLobby.value!!.words[1]
+        tvWord3.text = gameViewModel.currentLobby.value!!.words[2]
+        tvTimerWhenChoosing.text = gameViewModel.currentLobby.value!!.timer.toString()
     }
 
     private fun isNotDrawingAndChoosingUi() {
@@ -140,8 +152,36 @@ class GameFragment : Fragment() {
         cardCommonWhatWasTheWord = view.findViewById(R.id.card_common_what_was_the_word)
         tvCommonWordAns = view.findViewById(R.id.tv_common_word_ans)
         tvTimerOnPaintCanvas = view.findViewById(R.id.tv_timer_on_paint_canvas)
-        word1 = view.findViewById(R.id.word1)
-        word2 = view.findViewById(R.id.word2)
-        word3 = view.findViewById(R.id.word3)
+        tvTimerWhenChoosing = view.findViewById(R.id.tv_timer_is_choosing)
+        cardWord1 = view.findViewById(R.id.word1)
+        cardWord1.setOnClickListener { updateSelectedWordCards(1) }
+        tvWord1 = view.findViewById(R.id.tv_word1)
+        cardWord2 = view.findViewById(R.id.word2)
+        cardWord2.setOnClickListener { updateSelectedWordCards(2) }
+        tvWord2 = view.findViewById(R.id.tv_word2)
+        cardWord3 = view.findViewById(R.id.word3)
+        cardWord3.setOnClickListener { updateSelectedWordCards(3) }
+        tvWord3 = view.findViewById(R.id.tv_word3)
+    }
+
+    private fun updateSelectedWordCards(newVal: Int) {
+        currentlySelectedWord = newVal
+        when (currentlySelectedWord) {
+            1 -> {
+                cardWord1.isChecked = true
+                cardWord2.isChecked = false
+                cardWord3.isChecked = false
+            }
+            2 -> {
+                cardWord1.isChecked = false
+                cardWord2.isChecked = true
+                cardWord3.isChecked = false
+            }
+            3 -> {
+                cardWord1.isChecked = false
+                cardWord2.isChecked = false
+                cardWord3.isChecked = true
+            }
+        }
     }
 }

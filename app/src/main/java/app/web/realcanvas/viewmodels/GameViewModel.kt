@@ -194,4 +194,18 @@ class GameViewModel : ViewModel() {
             socket.send(Json.encodeToString(change))
         }
     }
+
+    fun updateSelectedWord(index: Int) {
+        if (currentLobby.value == null) return
+        viewModelScope.launch {
+            _currentLobby.value!!.selectedWord = currentLobby.value!!.words[index - 1]
+            _currentLobby.value!!.whatsHappening = WhatsHappening.DRAWING
+            _currentLobby.value!!.timer = 0
+            val change = Change(
+                ChangeType.LOBBY_UPDATE,
+                lobbyUpdateData = currentLobby.value
+            )
+            socket.send(Json.encodeToString(change))
+        }
+    }
 }

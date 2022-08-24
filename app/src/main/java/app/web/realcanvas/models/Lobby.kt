@@ -13,6 +13,7 @@ data class Lobby(
     val messages: MutableList<Message>,
     var whatsHappening: WhatsHappening,
     var timer: Short,
-    var word: String
+    var selectedWord: String,
+    val words: List<String>
 )
 
