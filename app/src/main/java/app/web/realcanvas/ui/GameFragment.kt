@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -16,9 +17,17 @@ class GameFragment : Fragment() {
     private lateinit var paintView: PaintView
     private lateinit var gameViewModel: GameViewModel
     private lateinit var tvTimer: TextView
-    private lateinit var cardNoDrawChoosing: MaterialCardView
+    private lateinit var cardIsNotDrawingAndChoosing: MaterialCardView
+    private lateinit var cardIsDrawingAndChoosing: MaterialCardView
+    private lateinit var cardCommonWhatWasTheWord: MaterialCardView
     private lateinit var tvPlayerChoosing: TextView
-    private lateinit var viewNoDrawGuess: MaterialCardView
+    private lateinit var tvCommonWordAns: TextView
+    private lateinit var tvTimerOnPaintCanvas: TextView
+    private lateinit var temp: TextView
+    private lateinit var cardPaintingCanvas: MaterialCardView
+    private lateinit var word1: Button
+    private lateinit var word2: Button
+    private lateinit var word3: Button
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -47,10 +56,11 @@ class GameFragment : Fragment() {
     private fun updateUiForCurrentPlayer() {
         if (gameViewModel.currentPlayer == null || gameViewModel.currentLobby.value == null) return
 
+        temp.text = gameViewModel.currentPlayer.toString()
         val isDrawing = gameViewModel.currentPlayer!!.isDrawing
         if (isDrawing) {
             if (gameViewModel.currentLobby.value!!.whatsHappening == WhatsHappening.CHOOSING) {
-                //todo: show dialog
+                isDrawingAndChoosingUi()
             } else {
                 isDrawingAndDrawingUi()
             }
@@ -58,15 +68,41 @@ class GameFragment : Fragment() {
             if (gameViewModel.currentLobby.value!!.whatsHappening == WhatsHappening.CHOOSING) {
                 isNotDrawingAndChoosingUi()
             } else {
-                isNotDrawingAndDrawingUi()
+                isNotDrawingAndGuessingUi()
             }
+        }
+
+        if (gameViewModel.currentLobby.value!!.whatsHappening == WhatsHappening.DRAWING && gameViewModel.currentLobby.value!!.timer.toInt() == 1) {
+            showCommonWhatWasTheWordCard()
+            paintView.setIsDrawing(false)
+            paintView.reset()
         }
     }
 
-    private fun isNotDrawingAndChoosingUi() {
-        viewNoDrawGuess.visibility = View.GONE
+    private fun showCommonWhatWasTheWordCard() {
+        cardPaintingCanvas.visibility = View.GONE
+        cardIsNotDrawingAndChoosing.visibility = View.GONE
+        cardIsDrawingAndChoosing.visibility = View.GONE
+        cardCommonWhatWasTheWord.visibility = View.VISIBLE
+        val string = "Word was ${gameViewModel.currentLobby.value!!.word}"
+        tvCommonWordAns.text = string
+    }
 
-        cardNoDrawChoosing.visibility = View.VISIBLE
+    private fun isDrawingAndChoosingUi() {
+        cardPaintingCanvas.visibility = View.GONE
+        cardIsNotDrawingAndChoosing.visibility = View.GONE
+        cardCommonWhatWasTheWord.visibility = View.GONE
+        cardIsDrawingAndChoosing.visibility = View.VISIBLE
+        word1.text = gameViewModel.currentLobby.value!!.word
+        word2.text = gameViewModel.currentLobby.value!!.word
+        word3.text = gameViewModel.currentLobby.value!!.word
+    }
+
+    private fun isNotDrawingAndChoosingUi() {
+        cardIsDrawingAndChoosing.visibility = View.GONE
+        cardPaintingCanvas.visibility = View.GONE
+        cardCommonWhatWasTheWord.visibility = View.GONE
+        cardIsNotDrawingAndChoosing.visibility = View.VISIBLE
         val name =
             gameViewModel.currentLobby.value!!.players.values.filter { it.isDrawing }[0].userName
         val string = "$name is choosing a word"
@@ -74,21 +110,38 @@ class GameFragment : Fragment() {
         tvTimer.text = gameViewModel.currentLobby.value!!.timer.toString()
     }
 
-    private fun isNotDrawingAndDrawingUi() {
-        cardNoDrawChoosing.visibility = View.GONE
-        cardNoDrawChoosing.visibility = View.VISIBLE
+    private fun isNotDrawingAndGuessingUi() {
+        cardIsDrawingAndChoosing.visibility = View.GONE
+        cardIsNotDrawingAndChoosing.visibility = View.GONE
+        cardCommonWhatWasTheWord.visibility = View.GONE
+        cardPaintingCanvas.visibility = View.VISIBLE
+        tvTimerOnPaintCanvas.text = gameViewModel.currentLobby.value!!.timer.toString()
+        paintView.setIsDrawing(false)
     }
 
     private fun isDrawingAndDrawingUi() {
-
+        cardIsDrawingAndChoosing.visibility = View.GONE
+        cardIsNotDrawingAndChoosing.visibility = View.GONE
+        cardCommonWhatWasTheWord.visibility = View.GONE
+        cardPaintingCanvas.visibility = View.VISIBLE
+        tvTimerOnPaintCanvas.text = gameViewModel.currentLobby.value!!.timer.toString()
+        paintView.setIsDrawing(true)
     }
 
     private fun initUi(view: View) {
-        tvTimer = view.findViewById(R.id.tv_timer)
+        tvTimer = view.findViewById(R.id.tv_timer_when_choosing)
         paintView = view.findViewById(R.id.paint_view)
         paintView.init(gameViewModel::sendDrawingPath)
-        cardNoDrawChoosing = view.findViewById(R.id.card_no_draw_choosing)
+        cardIsNotDrawingAndChoosing = view.findViewById(R.id.card_not_drawing_and_choosing)
         tvPlayerChoosing = view.findViewById(R.id.tv_player_choosing)
-        viewNoDrawGuess = view.findViewById(R.id.view_no_draw_guessing)
+        cardPaintingCanvas = view.findViewById(R.id.painting_canvas)
+        temp = view.findViewById(R.id.temp)
+        cardIsDrawingAndChoosing = view.findViewById(R.id.card_drawing_and_choosing)
+        cardCommonWhatWasTheWord = view.findViewById(R.id.card_common_what_was_the_word)
+        tvCommonWordAns = view.findViewById(R.id.tv_common_word_ans)
+        tvTimerOnPaintCanvas = view.findViewById(R.id.tv_timer_on_paint_canvas)
+        word1 = view.findViewById(R.id.word1)
+        word2 = view.findViewById(R.id.word2)
+        word3 = view.findViewById(R.id.word3)
     }
 }

@@ -40,10 +40,10 @@ class LobbyFragment : Fragment() {
         gameViewModel.currentLobby.observe(viewLifecycleOwner) {
             updateUiIfAdmin(gameViewModel.currentPlayer)
         }
+        gameViewModel.newMessage.observe(viewLifecycleOwner) { showBadgeIfRequired() }
     }
 
     private fun showBadgeIfRequired() {
-        //todo: add another livedata
         val currentTab = tabLayout.selectedTabPosition
         if (currentTab != 1) {
             val badge = tabLayout.getTabAt(1)?.orCreateBadge

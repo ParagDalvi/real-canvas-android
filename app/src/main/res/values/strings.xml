@@ -17,4 +17,5 @@
     <string name="message">Message</string>
     <string name="you">You</string>
     <string name="admin">Admin</string>
+    <string name="please_choose_a_word">Please choose a word</string>
 </resources>
