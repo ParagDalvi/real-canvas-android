@@ -17,11 +17,12 @@ import app.web.realcanvas.models.DrawPoints
 class PaintView(context: Context, attrs: AttributeSet) : View(context, attrs) {
     private var isDrawing = false
     private val defaultWidth = 20f
-    private val pathList = ArrayList<DrawPath>()
-    private val drawingPoints = ArrayList<DrawPoints>()
+    private val pathList = mutableListOf<DrawPath>()
+    private val drawingPoints = mutableListOf<DrawPoints>()
     private val currentBrush = Color.BLACK
     private val paint = Paint()
     private val path = Path()
+    private var previouslyPointsSentIndex = 0
     private lateinit var fragment: GameFragment
 
     fun init(fragment: GameFragment) {
@@ -37,29 +38,31 @@ class PaintView(context: Context, attrs: AttributeSet) : View(context, attrs) {
         isDrawing = b
     }
 
-    private fun updateDrawing(list: List<DrawPoints>?) {
+    private fun updateDrawing(list: List<DrawPoints>) {
         path.reset()
-        list?.forEach {
+        list.forEach {
             when (it.what) {
                 "move" -> {
                     path.moveTo(it.x, it.y)
                     pathList.add(DrawPath(currentBrush, path))
-                    invalidate()
                 }
                 "line" -> {
                     path.lineTo(it.x, it.y)
-                    invalidate()
                 }
             }
         }
+        invalidate()
     }
 
-    //todo: undo not working
     fun undo(shouldUpdateOthers: Boolean = false) {
-        if (drawingPoints.size >= 20)
-            drawingPoints.dropLast(20)
-        else
+        drawingPoints.dropLast(20).also {
             drawingPoints.clear()
+            drawingPoints.addAll(it)
+        }
+        if (drawingPoints.isEmpty())
+            previouslyPointsSentIndex = 0
+        else
+            previouslyPointsSentIndex -= 20
         updateDrawing(drawingPoints)
         if (shouldUpdateOthers)
             fragment.sendDrawingToOthers(drawingPoints, DoWhatWhenDrawing.UNDO)
@@ -67,6 +70,7 @@ class PaintView(context: Context, attrs: AttributeSet) : View(context, attrs) {
 
     fun clear(shouldUpdateOthers: Boolean = false) {
         reset()
+        previouslyPointsSentIndex = 0
         updateDrawing(drawingPoints)
         if (shouldUpdateOthers)
             fragment.sendDrawingToOthers(drawingPoints, DoWhatWhenDrawing.CLEAR)
@@ -116,11 +120,20 @@ class PaintView(context: Context, attrs: AttributeSet) : View(context, attrs) {
                 path.lineTo(x, y)
                 drawingPoints.add(DrawPoints("line", currentBrush, x, y))
                 invalidate()
-                fragment.sendDrawingToOthers(drawingPoints, DoWhatWhenDrawing.ADD)
-                drawingPoints.clear()
+                updateOthers()
                 true
             }
             else -> false
         }
+    }
+
+    private fun updateOthers() {
+        fragment.sendDrawingToOthers(
+            drawingPoints.subList(
+                previouslyPointsSentIndex,
+                drawingPoints.size - 1
+            ), DoWhatWhenDrawing.ADD
+        )
+        previouslyPointsSentIndex = drawingPoints.size - 1
     }
 }
