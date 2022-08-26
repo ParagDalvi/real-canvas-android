@@ -24,8 +24,8 @@ class GameViewModel : ViewModel() {
     private val _currentLobby: MutableLiveData<Lobby?> = MutableLiveData(null)
     val currentLobby: LiveData<Lobby?> get() = _currentLobby
 
-    private val _drawingList: MutableLiveData<List<DrawPoints>> = MutableLiveData(listOf())
-    val drawingList: LiveData<List<DrawPoints>> get() = _drawingList
+    private val _drawingData: MutableLiveData<DrawingData> = MutableLiveData()
+    val drawingData: LiveData<DrawingData> get() = _drawingData
 
     private val _newMessage: MutableLiveData<Message> = MutableLiveData()
     val newMessage: LiveData<Message> get() = _newMessage
@@ -104,7 +104,7 @@ class GameViewModel : ViewModel() {
 
     private fun handleDrawingPoints(change: Change) {
         val data = change.drawingData!!
-        _drawingList.value = data.list
+        _drawingData.value = data
     }
 
     private fun handleError(change: Change) {
@@ -180,7 +180,7 @@ class GameViewModel : ViewModel() {
         currentPlayer = null
     }
 
-    fun sendDrawingPath(list: List<DrawPoints>) {
+    fun sendDrawingPath(list: List<DrawPoints>, doWhatWhenDrawing: DoWhatWhenDrawing) {
         if (currentPlayer == null) return
         viewModelScope.launch {
             val change = Change(
@@ -188,6 +188,7 @@ class GameViewModel : ViewModel() {
                 drawingData = DrawingData(
                     currentLobby.value!!.id,
                     currentPlayer!!.userName,
+                    doWhatWhenDrawing,
                     list
                 )
             )

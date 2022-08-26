@@ -8,6 +8,10 @@ data class DrawPath(
     val path: Path
 )
 
+enum class DoWhatWhenDrawing {
+    ADD, UNDO, CLEAR
+}
+
 @Serializable
 data class DrawPoints(
     val what: String,

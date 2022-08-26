@@ -18,4 +18,7 @@
     <string name="you">You</string>
     <string name="admin">Admin</string>
     <string name="please_choose_a_word">Please choose a word in</string>
+    <string name="undo">Undo</string>
+    <string name="clear">Clear</string>
+    <string name="color_picker">Color Picker</string>
 </resources>
