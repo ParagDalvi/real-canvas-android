@@ -100,6 +100,7 @@ class GameFragment : Fragment() {
         if (gameViewModel.currentLobby.value!!.whatsHappening == WhatsHappening.CHOOSING && gameViewModel.currentLobby.value!!.timer.toInt() == 1) {
             // choosing -> drawing
             gameViewModel.updateSelectedWord(currentlySelectedWord)
+            paintView.reset()
         }
     }
 
