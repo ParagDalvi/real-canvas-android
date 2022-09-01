@@ -13,6 +13,7 @@ import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.websocket.*
 import io.ktor.http.*
 import io.ktor.websocket.*
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
@@ -29,6 +30,8 @@ class GameViewModel : ViewModel() {
 
     private val _newMessage: MutableLiveData<Message> = MutableLiveData()
     val newMessage: LiveData<Message> get() = _newMessage
+
+    var currentlySelectedWord: String? = null
 
     private val _toast: MutableLiveData<String> = MutableLiveData()
     val toast: LiveData<String> get() = _toast
@@ -65,8 +68,10 @@ class GameViewModel : ViewModel() {
                 }
             } catch (e: Exception) {
                 Log.e(TAG, "startSession: ${e.message}")
+                //todo: show error
             } finally {
-                socket.close()
+                if (::socket.isInitialized && socket.isActive)
+                    socket.close()
                 Log.i(TAG, "startSession: Session closed")
             }
         }
@@ -92,8 +97,13 @@ class GameViewModel : ViewModel() {
             ChangeType.ERROR -> handleError(change)
             ChangeType.DRAWING -> handleDrawingPoints(change)
             ChangeType.MESSAGE -> handleNewMessage(change)
+            ChangeType.SELECTED_WORD -> handleSelectedWord(change)
             else -> {}
         }
+    }
+
+    private fun handleSelectedWord(change: Change) {
+        currentlySelectedWord = change.selectedWordData!!.word
     }
 
     private fun handleNewMessage(change: Change) {
@@ -199,12 +209,12 @@ class GameViewModel : ViewModel() {
     fun updateSelectedWord(index: Int) {
         if (currentLobby.value == null) return
         viewModelScope.launch {
-            _currentLobby.value!!.selectedWord = currentLobby.value!!.words[index - 1]
-            _currentLobby.value!!.whatsHappening = WhatsHappening.DRAWING
-            _currentLobby.value!!.timer = 0
             val change = Change(
-                ChangeType.LOBBY_UPDATE,
-                lobbyUpdateData = currentLobby.value
+                ChangeType.SELECTED_WORD,
+                selectedWordData = SelectedWordData(
+                    currentLobby.value!!.id,
+                    currentLobby.value!!.words[index - 1]
+                )
             )
             socket.send(Json.encodeToString(change))
         }

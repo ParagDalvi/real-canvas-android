@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -39,9 +40,10 @@ class GameFragment : Fragment() {
     private lateinit var btnClear: ImageButton
     private lateinit var btnColorPicker: ImageButton
     private lateinit var paintView: PaintView
-    private lateinit var btnsForDrawing: ConstraintLayout
+    private lateinit var buttonsForDrawing: ConstraintLayout
+    private lateinit var llSelectedWord: LinearLayout
 
-    private var currentlySelectedWord = 1
+    private var currentlySelectedWordIndex: Int? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -76,6 +78,7 @@ class GameFragment : Fragment() {
 
         tvTimer.text = gameViewModel.currentLobby.value!!.timer.toString()
         val isDrawing = gameViewModel.currentPlayer!!.isDrawing
+        // todo: can be optimised with checks
         if (isDrawing) {
             if (gameViewModel.currentLobby.value!!.whatsHappening == WhatsHappening.CHOOSING) {
                 isDrawingAndChoosingUi()
@@ -99,13 +102,12 @@ class GameFragment : Fragment() {
 
         if (gameViewModel.currentLobby.value!!.whatsHappening == WhatsHappening.CHOOSING && gameViewModel.currentLobby.value!!.timer.toInt() == 1) {
             // choosing -> drawing
-            gameViewModel.updateSelectedWord(currentlySelectedWord)
             paintView.reset()
         }
     }
 
     private fun showCommonWhatWasTheWordCard() {
-        val string = "Word was ${gameViewModel.currentLobby.value!!.selectedWord}"
+        val string = "Word was ${gameViewModel.currentlySelectedWord}"
         Toast.makeText(context, string, Toast.LENGTH_SHORT).show()
     }
 
@@ -122,7 +124,8 @@ class GameFragment : Fragment() {
         drawingCanvas.visibility = View.GONE
         viewNotDrawingAndChoosing.visibility = View.VISIBLE
         val name =
-            gameViewModel.currentLobby.value!!.players.values.filter { it.isDrawing }[0].userName
+            gameViewModel.currentLobby.value!!.players.values.filter { it.isDrawing }
+                .getOrNull(0)?.userName
         val string = "$name is choosing a word"
         tvPlayerChoosing.text = string
     }
@@ -131,7 +134,8 @@ class GameFragment : Fragment() {
         viewDrawingAndChoosing.visibility = View.GONE
         viewNotDrawingAndChoosing.visibility = View.GONE
         drawingCanvas.visibility = View.VISIBLE
-        btnsForDrawing.visibility = View.GONE
+        showSelectedWord(false)
+        buttonsForDrawing.visibility = View.GONE
         paintView.setIsDrawing(false)
     }
 
@@ -139,7 +143,8 @@ class GameFragment : Fragment() {
         viewDrawingAndChoosing.visibility = View.GONE
         viewNotDrawingAndChoosing.visibility = View.GONE
         drawingCanvas.visibility = View.VISIBLE
-        btnsForDrawing.visibility = View.VISIBLE
+        showSelectedWord(true)
+        buttonsForDrawing.visibility = View.VISIBLE
         paintView.setIsDrawing(true)
     }
 
@@ -167,29 +172,54 @@ class GameFragment : Fragment() {
         btnClear = view.findViewById(R.id.btn_clear)
         btnClear.setOnClickListener { paintView.clear(true) }
         btnColorPicker = view.findViewById(R.id.btn_color_picker)
-        btnsForDrawing = view.findViewById(R.id.buttons_for_drawing)
+        buttonsForDrawing = view.findViewById(R.id.buttons_for_drawing)
         paintView = view.findViewById(R.id.paint_view)
         paintView.init(this)
+        llSelectedWord = view.findViewById(R.id.ll_selected_word)
+    }
+
+    private fun showSelectedWord(shouldShowWord: Boolean) {
+        llSelectedWord.removeAllViews()
+        gameViewModel.currentlySelectedWord?.forEach { char ->
+            val view =
+                layoutInflater.inflate(R.layout.layout_alphabet, view?.parent as ViewGroup, false)
+            val tv: TextView = view.findViewById(R.id.tv_alphabet)
+            val dash: View = view.findViewById(R.id.dash)
+
+            if (char == ' ') dash.visibility = View.GONE
+            else dash.visibility = View.VISIBLE
+
+            if (shouldShowWord) {
+                tv.visibility = View.VISIBLE
+                tv.text = "$char"
+            } else {
+                tv.visibility = View.GONE
+            }
+            llSelectedWord.addView(view)
+        }
     }
 
     private fun updateSelectedWordCards(newVal: Int) {
-        currentlySelectedWord = newVal
-        when (currentlySelectedWord) {
-            1 -> {
-                cardWord1.isChecked = true
-                cardWord2.isChecked = false
-                cardWord3.isChecked = false
+        if (currentlySelectedWordIndex == null || currentlySelectedWordIndex != newVal) {
+            currentlySelectedWordIndex = newVal
+            when (currentlySelectedWordIndex) {
+                1 -> {
+                    cardWord1.isChecked = true
+                    cardWord2.isChecked = false
+                    cardWord3.isChecked = false
+                }
+                2 -> {
+                    cardWord1.isChecked = false
+                    cardWord2.isChecked = true
+                    cardWord3.isChecked = false
+                }
+                3 -> {
+                    cardWord1.isChecked = false
+                    cardWord2.isChecked = false
+                    cardWord3.isChecked = true
+                }
             }
-            2 -> {
-                cardWord1.isChecked = false
-                cardWord2.isChecked = true
-                cardWord3.isChecked = false
-            }
-            3 -> {
-                cardWord1.isChecked = false
-                cardWord2.isChecked = false
-                cardWord3.isChecked = true
-            }
+            gameViewModel.updateSelectedWord(currentlySelectedWordIndex!!)
         }
     }
 
