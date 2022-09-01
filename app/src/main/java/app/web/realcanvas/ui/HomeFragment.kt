@@ -4,12 +4,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import android.widget.Button
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import app.web.realcanvas.R
 import app.web.realcanvas.viewmodels.GameViewModel
+import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 
 class HomeFragment : Fragment() {
@@ -25,12 +27,7 @@ class HomeFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_home, container, false)
         intiUi(view)
         initViewModels()
-        observe()
         return view
-    }
-
-    private fun observe() {
-
     }
 
     private fun initViewModels() {
@@ -42,6 +39,13 @@ class HomeFragment : Fragment() {
         btnCreateOrJoin.setOnClickListener { createOrJoin() }
         etUserName = view.findViewById(R.id.et_username)
         etCode = view.findViewById(R.id.et_lobby_code)
+        view.findViewById<TextInputEditText>(R.id.edit_text_code)
+            .setOnEditorActionListener { _, id, _ ->
+                if (id == EditorInfo.IME_ACTION_GO) {
+                    createOrJoin()
+                    true
+                } else false
+            }
     }
 
     private fun createOrJoin() {
@@ -49,12 +53,12 @@ class HomeFragment : Fragment() {
         val code = etCode.editText?.text.toString().trim()
 
         if (userName.isEmpty()) {
-            Toast.makeText(context, "Please enter Username", Toast.LENGTH_SHORT).show()
+            gameViewModel.showToast("Please enter Username")
             return
         }
 
         if (userName.length <= 2) {
-            Toast.makeText(context, "Please enter at least 3 letters", Toast.LENGTH_SHORT).show()
+            gameViewModel.showToast("Please enter at least 3 letters")
             return
         }
 

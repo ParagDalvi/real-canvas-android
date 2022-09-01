@@ -224,4 +224,8 @@ class GameViewModel : ViewModel() {
             socket.send(Json.encodeToString(change))
         }
     }
+
+    fun showToast(s: String) {
+        _toast.value = s
+    }
 }

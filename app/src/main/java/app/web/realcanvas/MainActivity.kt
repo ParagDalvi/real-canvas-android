@@ -1,7 +1,6 @@
 package app.web.realcanvas
 
 import android.os.Bundle
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
@@ -9,12 +8,9 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import app.web.realcanvas.models.Screen
 import app.web.realcanvas.viewmodels.GameViewModel
+import com.google.android.material.snackbar.Snackbar
 
 class MainActivity : AppCompatActivity() {
-
-    companion object {
-        const val TAG = "MainActivity"
-    }
 
     private lateinit var viewModel: GameViewModel
     private lateinit var navController: NavController
@@ -61,7 +57,8 @@ class MainActivity : AppCompatActivity() {
     private fun observe() {
         viewModel.screen.observe(this) { goTo(it) }
         viewModel.toast.observe(this) {
-            if (it != null) Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
+            if (it != null)
+                Snackbar.make(findViewById(R.id.content), it, Snackbar.LENGTH_SHORT).show()
         }
     }
 
