@@ -55,6 +55,8 @@ data class DrawingData(
 @Serializable
 data class MessageData(
     val lobbyId: String,
+    val selectedWord: String? = null,
+    val playerId: String? = null,
     val message: Message
 )
 

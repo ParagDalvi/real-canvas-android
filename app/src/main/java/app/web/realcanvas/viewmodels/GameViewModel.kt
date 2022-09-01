@@ -154,7 +154,12 @@ class GameViewModel : ViewModel() {
         viewModelScope.launch {
             val returnChange = Change(
                 type = ChangeType.MESSAGE,
-                messageData = MessageData(currentLobby.value!!.id, message)
+                messageData = MessageData(
+                    currentLobby.value!!.id,
+                    currentlySelectedWord,
+                    currentPlayer?.userName,
+                    message
+                )
             )
             socket.send(Json.encodeToString(returnChange))
         }
