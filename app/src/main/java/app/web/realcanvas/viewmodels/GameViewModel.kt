@@ -41,6 +41,9 @@ class GameViewModel : ViewModel() {
     private val _screen: MutableLiveData<Screen> = MutableLiveData(Screen.HOME)
     val screen: LiveData<Screen> get() = _screen
 
+    private val _isLoading: MutableLiveData<Boolean> = MutableLiveData(false)
+    val isLoading: LiveData<Boolean> get() = _isLoading
+
     private lateinit var client: HttpClient
     private lateinit var socket: WebSocketSession
 
@@ -49,6 +52,7 @@ class GameViewModel : ViewModel() {
     }
 
     fun startSession(userName: String, lobbyId: String? = null) {
+        _isLoading.value = true
         viewModelScope.launch {
             client = HttpClient(CIO) { install(WebSockets) }
             try {
@@ -66,10 +70,12 @@ class GameViewModel : ViewModel() {
                         frame as? Frame.Text ?: continue
                         val json = frame.readText()
                         onChange(json)
+                        _isLoading.value = false
                     }
                 }
             } catch (e: Exception) {
                 Log.e(TAG, "startSession: ${e.message}")
+                _isLoading.value = false
                 //todo: show error
             } finally {
                 if (::socket.isInitialized && socket.isActive)

@@ -24,13 +24,18 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_home, container, false)
+        gameViewModel = ViewModelProvider(requireActivity())[GameViewModel::class.java]
         intiUi(view)
-        initViewModels()
+        observe()
         return view
     }
 
-    private fun initViewModels() {
-        gameViewModel = ViewModelProvider(requireActivity())[GameViewModel::class.java]
+    private fun observe() {
+        gameViewModel.isLoading.observe(viewLifecycleOwner) {
+            if (it != null) {
+                btnCreateOrJoin.isEnabled = !it
+            }
+        }
     }
 
     private fun intiUi(view: View) {
@@ -48,6 +53,8 @@ class HomeFragment : Fragment() {
     }
 
     private fun createOrJoin() {
+        if (gameViewModel.isLoading.value == true) return
+
         val userName = etUserName.editText?.text.toString().trim()
         val code = etCode.editText?.text.toString().trim()
 
@@ -57,7 +64,7 @@ class HomeFragment : Fragment() {
         }
 
         if (userName.length <= 2) {
-            gameViewModel.showToast("Please enter at least 3 letters")
+            gameViewModel.showToast("Username is short")
             return
         }
 
