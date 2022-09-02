@@ -1,10 +1,14 @@
 package app.web.realcanvas.ui
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageButton
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -17,9 +21,11 @@ import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.android.material.textview.MaterialTextView
 
+
 class LobbyFragment : Fragment() {
     private lateinit var gameViewModel: GameViewModel
     private lateinit var btnStart: Button
+    private lateinit var btnCopy: ImageButton
     private lateinit var tabLayout: TabLayout
     private lateinit var viewPager: ViewPager2
     private lateinit var tvLobbyCode: MaterialTextView
@@ -63,13 +69,13 @@ class LobbyFragment : Fragment() {
         tvLobbyCode.text = getLobbyText()
         btnStart = view.findViewById(R.id.btn_start)
         btnStart.setOnClickListener { startGame() }
+        btnCopy = view.findViewById(R.id.btn_copy)
+        btnCopy.setOnClickListener { copy() }
         tabLayout = view.findViewById(R.id.tabLayout)
         viewPager = view.findViewById(R.id.viewpager)
 
         viewPager.adapter = object : FragmentStateAdapter(this) {
-            override fun getItemCount(): Int {
-                return 2
-            }
+            override fun getItemCount() = 2
 
             override fun createFragment(position: Int): Fragment {
                 return if (position == 0) PlayersListFragment() else MessageFragment()
@@ -98,6 +104,14 @@ class LobbyFragment : Fragment() {
 
             override fun onTabReselected(tab: TabLayout.Tab?) {}
         })
+    }
+
+    private fun copy() {
+        if (gameViewModel.currentLobby.value == null) return
+        val clipboard = context?.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        val clip = ClipData.newPlainText("label", gameViewModel.currentLobby.value?.id)
+        clipboard.setPrimaryClip(clip)
+        gameViewModel.showToast("Copied!")
     }
 
     private fun getLobbyText(): String? {

@@ -9,7 +9,7 @@
     <string name="start">Start</string>
     <string name="exit_lobby">Quit Game</string>
     <string name="exit_lobby_message">Are you sure you want to leave the game?</string>
-    <string name="share">Share</string>
+    <string name="copy">Copy</string>
     <string name="remove">Remove</string>
     <string name="players">Players</string>
     <string name="messages">Messages</string>
