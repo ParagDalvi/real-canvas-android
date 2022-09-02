@@ -20,10 +20,6 @@ import kotlinx.coroutines.launch
 
 class MessageFragment : Fragment() {
 
-    companion object {
-        const val TAG = "MessageFragment"
-    }
-
     private lateinit var gameViewModel: GameViewModel
     private lateinit var rvMessage: RecyclerView
     private lateinit var adapter: MessageAdapter

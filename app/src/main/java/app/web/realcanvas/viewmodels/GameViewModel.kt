@@ -6,7 +6,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.web.realcanvas.models.*
-import app.web.realcanvas.remote.SocketService
+import app.web.realcanvas.util.HOST
+import app.web.realcanvas.util.PATH
+import app.web.realcanvas.util.PORT
 import app.web.realcanvas.util.RESET
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
@@ -52,9 +54,9 @@ class GameViewModel : ViewModel() {
             try {
                 client.webSocket(
                     method = HttpMethod.Get,
-                    host = SocketService.HOST,
-                    port = SocketService.PORT,
-                    path = SocketService.PATH
+                    host = HOST,
+                    port = PORT,
+                    path = PATH
                 ) {
                     socket = this
                     val request = createOrJoin(userName, lobbyId)
