@@ -12,7 +12,7 @@ import app.web.realcanvas.models.Player
 
 class LobbyAdapter(
     private var players: List<Player>,
-    private val currentPlayer: Player?
+    private var currentPlayer: Player?
 ) : RecyclerView.Adapter<LobbyAdapter.ViewHolder>() {
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -42,7 +42,7 @@ class LobbyAdapter(
         holder.tvScore.visibility = if (player.score == 0) View.GONE else View.VISIBLE
 
         if (currentPlayer?.isAdmin == true) {
-            if (player.userName != currentPlayer.userName) {
+            if (player.userName != currentPlayer?.userName) {
                 holder.btnRemove.visibility = View.VISIBLE
                 holder.btnRemove.setOnClickListener { removePlayer(player) }
 
@@ -62,8 +62,9 @@ class LobbyAdapter(
     override fun getItemCount(): Int = players.size
 
     @SuppressLint("NotifyDataSetChanged")
-    fun updatePlayers(players: List<Player>) {
+    fun updatePlayers(players: List<Player>, currentPlayer: Player?) {
         this.players = players
+        this.currentPlayer = currentPlayer
         notifyDataSetChanged()
     }
 }
