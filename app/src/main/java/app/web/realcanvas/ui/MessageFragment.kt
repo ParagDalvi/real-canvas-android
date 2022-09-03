@@ -69,7 +69,7 @@ class MessageFragment : Fragment() {
     private fun sendMessage() {
         val msg = etSend.editText?.text.toString().trim()
         if (msg.length > maxChars) {
-            gameViewModel.showToast("Message to big")
+            gameViewModel.showToast("Message too big")
             return
         }
         etSend.editText?.text?.clear()
