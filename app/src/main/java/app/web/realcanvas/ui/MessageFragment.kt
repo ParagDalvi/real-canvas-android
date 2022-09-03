@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
+import android.view.inputmethod.EditorInfo
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -14,7 +14,9 @@ import app.web.realcanvas.R
 import app.web.realcanvas.models.Message
 import app.web.realcanvas.models.MessageType
 import app.web.realcanvas.ui.adapters.MessageAdapter
+import app.web.realcanvas.util.hideKeyboard
 import app.web.realcanvas.viewmodels.GameViewModel
+import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import kotlinx.coroutines.launch
 
@@ -23,7 +25,6 @@ class MessageFragment : Fragment() {
     private lateinit var gameViewModel: GameViewModel
     private lateinit var rvMessage: RecyclerView
     private lateinit var adapter: MessageAdapter
-    private lateinit var btnSend: ImageButton
     private lateinit var etSend: TextInputLayout
     private val maxChars = 100
 
@@ -52,17 +53,27 @@ class MessageFragment : Fragment() {
     private fun initUi(view: View) {
         rvMessage = view.findViewById(R.id.rv_messages)
         etSend = view.findViewById(R.id.et_message)
+        etSend.setEndIconOnClickListener { sendMessage() }
         adapter = MessageAdapter(mutableListOf(), gameViewModel.currentPlayer?.userName)
         rvMessage.adapter = adapter
         rvMessage.layoutManager = LinearLayoutManager(context)
-        btnSend = view.findViewById(R.id.btn_send_message)
-        btnSend.setOnClickListener { sendMessage() }
+        view.findViewById<TextInputEditText>(R.id.edit_text_message)
+            .setOnEditorActionListener { _, id, _ ->
+                if (id == EditorInfo.IME_ACTION_SEND) {
+                    sendMessage()
+                    true
+                } else false
+            }
     }
 
     private fun sendMessage() {
         val msg = etSend.editText?.text.toString().trim()
+        if (msg.length > maxChars) {
+            gameViewModel.showToast("Message to big")
+            return
+        }
         etSend.editText?.text?.clear()
-        if (msg.isEmpty() || msg.length > maxChars) return
+        if (msg.isEmpty()) return
         if (gameViewModel.currentPlayer == null) return
         gameViewModel.sendMessage(
             Message(
@@ -71,5 +82,6 @@ class MessageFragment : Fragment() {
                 msg
             )
         )
+        hideKeyboard(context, activity?.currentFocus)
     }
 }

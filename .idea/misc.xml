@@ -16,12 +16,14 @@
         <entry key="app/src/main/res/layout/fragment_lobby_test.xml" value="0.23108825683593748" />
         <entry key="app/src/main/res/layout/fragment_message.xml" value="0.2259963768115942" />
         <entry key="app/src/main/res/layout/fragment_message_and_score.xml" value="0.20969202898550723" />
+        <entry key="app/src/main/res/layout/fragment_players_list.xml" value="0.19701086956521738" />
         <entry key="app/src/main/res/layout/fragment_scoreboard.xml" value="0.24479166666666666" />
         <entry key="app/src/main/res/layout/layout_alphabet.xml" value="0.5398671096345515" />
         <entry key="app/src/main/res/layout/layout_drawing_and_choosing.xml" value="0.1" />
         <entry key="app/src/main/res/layout/layout_drawing_canvas.xml" value="0.25" />
         <entry key="app/src/main/res/layout/layout_lobby_item.xml" value="0.375" />
-        <entry key="app/src/main/res/layout/layout_message_item.xml" value="0.375" />
+        <entry key="app/src/main/res/layout/layout_message_item.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/layout_message_item_temp.xml" value="0.23958333333333334" />
         <entry key="app/src/main/res/layout/layout_not_drawing_and_choosing.xml" value="0.1" />
         <entry key="app/src/main/res/layout/layout_selected_word.xml" value="0.23958333333333334" />
         <entry key="app/src/main/res/menu/lobby_bot_nav.xml" value="0.24479166666666666" />
