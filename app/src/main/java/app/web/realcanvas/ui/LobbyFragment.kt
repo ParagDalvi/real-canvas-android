@@ -4,27 +4,24 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.widget.Button
+import android.view.*
 import android.widget.ImageButton
 import androidx.core.content.ContextCompat
+import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import app.web.realcanvas.R
-import app.web.realcanvas.models.Player
 import app.web.realcanvas.viewmodels.GameViewModel
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.android.material.textview.MaterialTextView
 
 
-class LobbyFragment : Fragment() {
+class LobbyFragment : Fragment(), MenuProvider {
     private lateinit var gameViewModel: GameViewModel
-    private lateinit var btnStart: Button
     private lateinit var btnCopy: ImageButton
     private lateinit var tabLayout: TabLayout
     private lateinit var viewPager: ViewPager2
@@ -37,14 +34,14 @@ class LobbyFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_lobby, container, false)
         gameViewModel = ViewModelProvider(requireActivity())[GameViewModel::class.java]
         initUi(view)
-        updateUiIfAdmin(gameViewModel.currentPlayer)
+        activity?.addMenuProvider(this, viewLifecycleOwner, Lifecycle.State.RESUMED)
         observe()
         return view
     }
 
     private fun observe() {
         gameViewModel.currentLobby.observe(viewLifecycleOwner) {
-            updateUiIfAdmin(gameViewModel.currentPlayer)
+            updateUiIfAdmin()
         }
         gameViewModel.newMessage.observe(viewLifecycleOwner) { showBadgeIfRequired() }
     }
@@ -57,18 +54,13 @@ class LobbyFragment : Fragment() {
         }
     }
 
-    private fun updateUiIfAdmin(currentPlayer: Player?) {
-        if (currentPlayer == null) return
-
-        if (currentPlayer.isAdmin) btnStart.visibility = View.VISIBLE
-        else btnStart.visibility = View.GONE
+    private fun updateUiIfAdmin() {
+        requireActivity().invalidateOptionsMenu()
     }
 
     private fun initUi(view: View) {
         tvLobbyCode = view.findViewById(R.id.tv_lobby_code)
         tvLobbyCode.text = getLobbyText()
-        btnStart = view.findViewById(R.id.btn_start)
-        btnStart.setOnClickListener { startGame() }
         btnCopy = view.findViewById(R.id.btn_copy)
         btnCopy.setOnClickListener { copy() }
         tabLayout = view.findViewById(R.id.tabLayout)
@@ -84,12 +76,8 @@ class LobbyFragment : Fragment() {
 
         TabLayoutMediator(tabLayout, viewPager) { tab, pos ->
             when (pos) {
-                0 -> {
-                    tab.text = "Players"
-                }
-                1 -> {
-                    tab.text = "Messages"
-                }
+                0 -> tab.text = "Players"
+                1 -> tab.text = "Messages"
             }
         }.attach()
 
@@ -120,11 +108,28 @@ class LobbyFragment : Fragment() {
     }
 
     private fun startGame() {
-//        if (gameViewModel.currentLobby?.players?.size!! < 2) {
-//            Toast.makeText(context, "Need at least 2 players", Toast.LENGTH_SHORT).show()
-//            return
-//        }
+        if (gameViewModel.currentLobby.value?.players?.size!! < 2) {
+            gameViewModel.showToast("Need at least 2 players")
+            return
+        }
 
         gameViewModel.startGame()
+    }
+
+    override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+        menuInflater.inflate(R.menu.lobby_menu, menu)
+    }
+
+    override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+        when (menuItem.itemId) {
+            R.id.start -> startGame()
+        }
+        return true
+    }
+
+    override fun onPrepareMenu(menu: Menu) {
+        super.onPrepareMenu(menu)
+        val item = menu.findItem(R.id.start)
+        item.isVisible = gameViewModel.currentPlayer?.isAdmin == true
     }
 }

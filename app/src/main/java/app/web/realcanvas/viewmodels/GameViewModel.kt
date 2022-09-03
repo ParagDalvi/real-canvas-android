@@ -198,6 +198,7 @@ class GameViewModel : ViewModel() {
     }
 
     private suspend fun clearData() {
+        //todo: call when returning home
         socket.close()
         _currentLobby.value = null
         currentPlayer = null

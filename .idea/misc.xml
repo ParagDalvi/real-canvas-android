@@ -3,6 +3,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="app/src/main/res/drawable/ic_play.xml" value="0.1845" />
         <entry key="app/src/main/res/drawable/ic_share.xml" value="0.2395" />
         <entry key="app/src/main/res/drawable/ic_star.xml" value="0.213" />
         <entry key="app/src/main/res/drawable/shape_circle.xml" value="0.1505" />
@@ -12,6 +13,7 @@
         <entry key="app/src/main/res/layout/fragment_game_new.xml" value="0.1" />
         <entry key="app/src/main/res/layout/fragment_home.xml" value="0.24479166666666666" />
         <entry key="app/src/main/res/layout/fragment_lobby.xml" value="0.22554347826086957" />
+        <entry key="app/src/main/res/layout/fragment_lobby_test.xml" value="0.23108825683593748" />
         <entry key="app/src/main/res/layout/fragment_message.xml" value="0.2259963768115942" />
         <entry key="app/src/main/res/layout/fragment_message_and_score.xml" value="0.20969202898550723" />
         <entry key="app/src/main/res/layout/fragment_scoreboard.xml" value="0.24479166666666666" />
@@ -22,6 +24,8 @@
         <entry key="app/src/main/res/layout/layout_message_item.xml" value="0.375" />
         <entry key="app/src/main/res/layout/layout_not_drawing_and_choosing.xml" value="0.1" />
         <entry key="app/src/main/res/layout/layout_selected_word.xml" value="0.23958333333333334" />
+        <entry key="app/src/main/res/menu/lobby_bot_nav.xml" value="0.24479166666666666" />
+        <entry key="app/src/main/res/menu/lobby_menu.xml" value="0.24479166666666666" />
       </map>
     </option>
   </component>
