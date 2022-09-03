@@ -31,8 +31,11 @@ class PlayersListFragment : Fragment() {
 
     private fun observe() {
         gameViewModel.currentLobby.observe(viewLifecycleOwner) {
-            if (it != null)
-                lobbyAdapter.updatePlayers(gameViewModel.currentLobby.value!!.players.values.toList())
+            if (it != null) {
+                val list = gameViewModel.currentLobby.value!!
+                    .players.values.sortedBy { player -> player.score }
+                lobbyAdapter.updatePlayers(list)
+            }
         }
     }
 
