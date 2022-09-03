@@ -135,9 +135,22 @@ class GameViewModel : ViewModel() {
 
     private fun updateLobby(change: Change) {
         val receivedLobby = change.lobbyUpdateData!!
+        checkIfAnyPlayerLeft(currentLobby.value?.players, receivedLobby.players)
         _currentLobby.value = receivedLobby
         updateCurrentPlayer()
         navigate()
+    }
+
+    private fun checkIfAnyPlayerLeft(
+        oldPlayers: MutableMap<String, Player>?,
+        newPlayers: MutableMap<String, Player>
+    ) {
+        oldPlayers?.keys?.forEach {
+            if (!newPlayers.containsKey(it)) {
+                showToast("$it left")
+                return
+            }
+        }
     }
 
     private fun updateCurrentPlayer() {
