@@ -81,6 +81,8 @@ class GameViewModel : ViewModel() {
                 if (::socket.isInitialized && socket.isActive)
                     socket.close()
                 Log.i(TAG, "startSession: Session closed")
+                _screen.value = Screen.HOME
+                _isLoading.value = false
             }
         }
     }
