@@ -1,12 +1,12 @@
 package app.web.realcanvas
 
 import android.os.Bundle
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import app.web.realcanvas.models.Screen
+import app.web.realcanvas.util.showCustomDialog
 import app.web.realcanvas.viewmodels.GameViewModel
 import com.google.android.material.snackbar.Snackbar
 
@@ -35,13 +35,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showLeaveDialog() {
-        AlertDialog.Builder(this)
-            .setTitle(getString(R.string.exit_lobby))
-            .setMessage(getString(R.string.exit_lobby_message))
-            .setPositiveButton(android.R.string.ok) { _, _ -> disconnect() }
-            .setNegativeButton(android.R.string.cancel, null)
-            .setIcon(android.R.drawable.ic_dialog_alert)
-            .show()
+        showCustomDialog(
+            this,
+            this::disconnect,
+            getString(R.string.exit_lobby),
+            getString(R.string.exit_lobby_message)
+        )
     }
 
     private fun disconnect() {

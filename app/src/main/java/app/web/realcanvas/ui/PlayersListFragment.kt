@@ -45,7 +45,7 @@ class PlayersListFragment : Fragment() {
 
     private fun initUi(view: View) {
         rvLobby = view.findViewById(R.id.rv_lobby)
-        lobbyAdapter = LobbyAdapter(listOf(), gameViewModel.currentPlayer)
+        lobbyAdapter = LobbyAdapter(listOf(), gameViewModel.currentPlayer, gameViewModel::removePlayer)
         rvLobby.adapter = lobbyAdapter
         rvLobby.layoutManager = LinearLayoutManager(context)
         rvLobby.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))

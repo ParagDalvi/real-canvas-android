@@ -12,7 +12,7 @@
         </deviceKey>
       </Target>
     </targetSelectedWithDropDown>
-    <timeTargetWasSelectedWithDropDown value="2022-09-03T16:54:59.365682Z" />
+    <timeTargetWasSelectedWithDropDown value="2022-09-06T18:22:47.456696Z" />
     <multipleDevicesSelectedInDropDown value="true" />
     <runningDeviceTargetsSelectedWithDialog>
       <Target>
@@ -20,7 +20,16 @@
         <deviceKey>
           <Key>
             <type value="SERIAL_NUMBER" />
-            <value value="adb-RZ8R220JFWA-1tq5Jv._adb-tls-connect._tcp." />
+            <value value="192.168.29.79:41656" />
+          </Key>
+        </deviceKey>
+      </Target>
+      <Target>
+        <type value="RUNNING_DEVICE_TARGET" />
+        <deviceKey>
+          <Key>
+            <type value="SERIAL_NUMBER" />
+            <value value="192.168.29.153:45725" />
           </Key>
         </deviceKey>
       </Target>
@@ -30,15 +39,6 @@
           <Key>
             <type value="SERIAL_NUMBER" />
             <value value="192.168.29.58:5555" />
-          </Key>
-        </deviceKey>
-      </Target>
-      <Target>
-        <type value="RUNNING_DEVICE_TARGET" />
-        <deviceKey>
-          <Key>
-            <type value="SERIAL_NUMBER" />
-            <value value="adb-R52N80R7L8X-uPO4vK._adb-tls-connect._tcp." />
           </Key>
         </deviceKey>
       </Target>

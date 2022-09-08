@@ -106,8 +106,14 @@ class GameViewModel : ViewModel() {
             ChangeType.DRAWING -> handleDrawingPoints(change)
             ChangeType.MESSAGE -> handleNewMessage(change)
             ChangeType.SELECTED_WORD -> handleSelectedWord(change)
+            ChangeType.REMOVE_PLAYER -> handleRemovePlayer()
             else -> {}
         }
+    }
+
+    private fun handleRemovePlayer() {
+        showToast("You were removed from the lobby")
+        _screen.value = Screen.HOME
     }
 
     private fun handleSelectedWord(change: Change) {
@@ -201,10 +207,7 @@ class GameViewModel : ViewModel() {
     fun disconnect() {
         if (currentLobby.value == null || currentPlayer == null) return
         viewModelScope.launch {
-            val returnChange = Change(
-                type = ChangeType.DISCONNECT,
-                disconnectData = DisconnectData(currentLobby.value!!.id, currentPlayer!!.userName)
-            )
+            val returnChange = Change(type = ChangeType.DISCONNECT)
             socket.send(Json.encodeToString(returnChange))
             clearData()
         }
@@ -249,5 +252,16 @@ class GameViewModel : ViewModel() {
 
     fun showToast(s: String) {
         _toast.value = s
+    }
+
+    fun removePlayer(player: Player) {
+        if (currentLobby.value == null) return
+        viewModelScope.launch {
+            val returnChange = Change(
+                type = ChangeType.REMOVE_PLAYER,
+                removePlayerData = RemovePlayerData(currentLobby.value!!.id, player.userName)
+            )
+            socket.send(Json.encodeToString(returnChange))
+        }
     }
 }

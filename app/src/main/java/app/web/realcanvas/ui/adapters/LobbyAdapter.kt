@@ -1,6 +1,7 @@
 package app.web.realcanvas.ui.adapters
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,10 +10,12 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import app.web.realcanvas.R
 import app.web.realcanvas.models.Player
+import app.web.realcanvas.util.showCustomDialog
 
 class LobbyAdapter(
     private var players: List<Player>,
-    private var currentPlayer: Player?
+    private var currentPlayer: Player?,
+    private val removePlayer: (Player) -> Unit,
 ) : RecyclerView.Adapter<LobbyAdapter.ViewHolder>() {
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -44,7 +47,12 @@ class LobbyAdapter(
         if (currentPlayer?.isAdmin == true) {
             if (player.userName != currentPlayer?.userName) {
                 holder.btnRemove.visibility = View.VISIBLE
-                holder.btnRemove.setOnClickListener { removePlayer(player) }
+                holder.btnRemove.setOnClickListener {
+                    removePlayerDialog(
+                        player,
+                        holder.itemView.context
+                    )
+                }
 
                 holder.tvIsAdmin.visibility = View.GONE
             }
@@ -55,8 +63,13 @@ class LobbyAdapter(
         }
     }
 
-    private fun removePlayer(player: Player) {
-
+    private fun removePlayerDialog(player: Player, context: Context) {
+        showCustomDialog(
+            context,
+            { removePlayer(player) },
+            "Remove ${player.userName}?",
+            "Are you sure you want to remove ${player.userName}?"
+        )
     }
 
     override fun getItemCount(): Int = players.size
