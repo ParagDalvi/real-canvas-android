@@ -75,8 +75,9 @@ class GameViewModel : ViewModel() {
                 }
             } catch (e: Exception) {
                 Log.e(TAG, "startSession: ${e.message}")
+                _screen.value = Screen.HOME
                 _isLoading.value = false
-                //todo: show error
+                _toast.value = e.localizedMessage
             } finally {
                 if (::socket.isInitialized && socket.isActive)
                     socket.close()
@@ -174,7 +175,10 @@ class GameViewModel : ViewModel() {
             WhatsHappening.WAITING -> _screen.value = Screen.LOBBY
             WhatsHappening.DRAWING -> _screen.value = Screen.GAME
             WhatsHappening.CHOOSING -> _screen.value = Screen.GAME
-            else -> _screen.value = Screen.HOME
+            else -> {
+                clearData()
+                _screen.value = Screen.HOME
+            }
         }
     }
 
@@ -215,9 +219,8 @@ class GameViewModel : ViewModel() {
         }
     }
 
-    private suspend fun clearData() {
-        //todo: call when returning home
-        socket.close()
+    private fun clearData() {
+        viewModelScope.launch { socket.close() }
         _currentLobby.value = null
         currentPlayer = null
     }
