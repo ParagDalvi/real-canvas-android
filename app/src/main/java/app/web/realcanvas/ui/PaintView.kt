@@ -12,6 +12,7 @@ import android.view.View
 import app.web.realcanvas.models.DoWhatWhenDrawing
 import app.web.realcanvas.models.DrawPath
 import app.web.realcanvas.models.DrawPoints
+import app.web.realcanvas.models.DrawingData
 
 
 class PaintView(context: Context, attrs: AttributeSet) : View(context, attrs) {
@@ -76,8 +77,16 @@ class PaintView(context: Context, attrs: AttributeSet) : View(context, attrs) {
             fragment.sendDrawingToOthers(drawingPoints, DoWhatWhenDrawing.CLEAR)
     }
 
-    fun add(newList: List<DrawPoints>) {
-        drawingPoints.addAll(newList)
+    fun add(
+        drawingData: DrawingData,
+        currentWidth: Int,
+        currentHeight: Int,
+    ) {
+        drawingData.list.forEach {
+            it.x = currentWidth * it.x / drawingData.width
+            it.y = currentHeight * it.y / drawingData.height
+            drawingPoints.add(it)
+        }
         updateDrawing(drawingPoints)
     }
 

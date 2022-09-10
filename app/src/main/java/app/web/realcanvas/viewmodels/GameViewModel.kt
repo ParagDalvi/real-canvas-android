@@ -225,7 +225,12 @@ class GameViewModel : ViewModel() {
         currentPlayer = null
     }
 
-    fun sendDrawingPath(list: List<DrawPoints>, doWhatWhenDrawing: DoWhatWhenDrawing) {
+    fun sendDrawingPath(
+        list: List<DrawPoints>,
+        doWhatWhenDrawing: DoWhatWhenDrawing,
+        width: Int,
+        height: Int
+    ) {
         if (currentPlayer == null) return
         viewModelScope.launch {
             val change = Change(
@@ -233,6 +238,8 @@ class GameViewModel : ViewModel() {
                 drawingData = DrawingData(
                     currentLobby.value!!.id,
                     currentPlayer!!.userName,
+                    width,
+                    height,
                     doWhatWhenDrawing,
                     list
                 )

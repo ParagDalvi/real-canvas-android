@@ -16,6 +16,6 @@ enum class DoWhatWhenDrawing {
 data class DrawPoints(
     val what: String,
     val color: Int,
-    val x: Float,
-    val y: Float
+    var x: Float,
+    var y: Float
 )

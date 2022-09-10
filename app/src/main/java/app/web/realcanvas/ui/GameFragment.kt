@@ -65,7 +65,11 @@ class GameFragment : Fragment() {
         gameViewModel.drawingData.observe(viewLifecycleOwner) {
             if (gameViewModel.currentPlayer?.isDrawing == false && it != null) {
                 when (it.doWhatWhenDrawing) {
-                    DoWhatWhenDrawing.ADD -> paintView.add(it.list)
+                    DoWhatWhenDrawing.ADD -> paintView.add(
+                        it,
+                        paintView.width,
+                        paintView.height,
+                    )
                     DoWhatWhenDrawing.CLEAR -> paintView.clear()
                     DoWhatWhenDrawing.UNDO -> paintView.undo()
                 }
@@ -224,6 +228,11 @@ class GameFragment : Fragment() {
     }
 
     fun sendDrawingToOthers(list: List<DrawPoints>, doWhatWhenDrawing: DoWhatWhenDrawing) {
-        gameViewModel.sendDrawingPath(list, doWhatWhenDrawing)
+        gameViewModel.sendDrawingPath(
+            list,
+            doWhatWhenDrawing,
+            paintView.width,
+            paintView.height
+        )
     }
 }
