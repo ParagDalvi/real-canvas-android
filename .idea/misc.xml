@@ -22,6 +22,7 @@
         <entry key="app/src/main/res/layout/layout_alphabet.xml" value="0.5398671096345515" />
         <entry key="app/src/main/res/layout/layout_drawing_and_choosing.xml" value="0.1" />
         <entry key="app/src/main/res/layout/layout_drawing_canvas.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/layout_guess_item.xml" value="0.23958333333333334" />
         <entry key="app/src/main/res/layout/layout_lobby_item.xml" value="0.375" />
         <entry key="app/src/main/res/layout/layout_message_item.xml" value="0.1" />
         <entry key="app/src/main/res/layout/layout_message_item_temp.xml" value="0.23958333333333334" />

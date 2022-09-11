@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -11,13 +12,18 @@ import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import app.web.realcanvas.R
-import app.web.realcanvas.models.DoWhatWhenDrawing
-import app.web.realcanvas.models.DrawPoints
-import app.web.realcanvas.models.WhatsHappening
+import app.web.realcanvas.models.*
+import app.web.realcanvas.ui.adapters.GuessAdapter
+import app.web.realcanvas.util.hideKeyboard
 import app.web.realcanvas.viewmodels.GameViewModel
 import com.google.android.material.card.MaterialCardView
+import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
+import kotlinx.coroutines.launch
 
 class GameFragment : Fragment() {
     private lateinit var gameViewModel: GameViewModel
@@ -45,8 +51,11 @@ class GameFragment : Fragment() {
     private lateinit var llSelectedWord: LinearLayout
 
     private lateinit var etGuess: TextInputLayout
+    private lateinit var rvGuesses: RecyclerView
 
     private var currentlySelectedWordIndex: Int? = null
+    private lateinit var guessAdapter: GuessAdapter
+    private val maxChars = 100
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -78,6 +87,33 @@ class GameFragment : Fragment() {
                 }
             }
         }
+
+        gameViewModel.newMessage.observe(viewLifecycleOwner) {
+            if (it != null) {
+                guessAdapter.addMessage(it)
+                if (guessAdapter.messages.isNotEmpty())
+                    lifecycleScope.launch { rvGuesses.smoothScrollToPosition(guessAdapter.messages.size - 1) }
+            }
+        }
+    }
+
+    private fun sendMessage() {
+        val msg = etGuess.editText?.text.toString().trim()
+        if (msg.length > maxChars) {
+            gameViewModel.showToast("Message too long")
+            return
+        }
+        etGuess.editText?.text?.clear()
+        if (msg.isEmpty()) return
+        if (gameViewModel.currentPlayer == null) return
+        gameViewModel.sendMessage(
+            Message(
+                gameViewModel.currentPlayer!!.userName,
+                MessageType.DEFAULT,
+                msg
+            )
+        )
+        hideKeyboard(context, activity?.currentFocus)
     }
 
     private fun updateUiForCurrentPlayer() {
@@ -119,6 +155,7 @@ class GameFragment : Fragment() {
     }
 
     private fun isDrawingAndChoosingUi() {
+        etGuess.visibility = View.GONE
         drawingCanvas.visibility = View.GONE
         viewDrawingAndChoosing.visibility = View.VISIBLE
         tvWord1.text = gameViewModel.currentLobby.value!!.words[0]
@@ -127,6 +164,7 @@ class GameFragment : Fragment() {
     }
 
     private fun isNotDrawingAndChoosingUi() {
+        etGuess.visibility = View.GONE
         viewDrawingAndChoosing.visibility = View.GONE
         drawingCanvas.visibility = View.GONE
         viewNotDrawingAndChoosing.visibility = View.VISIBLE
@@ -138,6 +176,7 @@ class GameFragment : Fragment() {
     }
 
     private fun isNotDrawingAndGuessingUi() {
+        etGuess.visibility = View.VISIBLE
         viewDrawingAndChoosing.visibility = View.GONE
         viewNotDrawingAndChoosing.visibility = View.GONE
         drawingCanvas.visibility = View.VISIBLE
@@ -147,6 +186,7 @@ class GameFragment : Fragment() {
     }
 
     private fun isDrawingAndDrawingUi() {
+        etGuess.visibility = View.GONE
         viewDrawingAndChoosing.visibility = View.GONE
         viewNotDrawingAndChoosing.visibility = View.GONE
         drawingCanvas.visibility = View.VISIBLE
@@ -182,9 +222,6 @@ class GameFragment : Fragment() {
         buttonsForDrawing = view.findViewById(R.id.buttons_for_drawing)
         paintView = view.findViewById(R.id.paint_view)
         paintView.init(this)
-        llSelectedWord = view.findViewById(R.id.ll_selected_word)
-
-        etGuess = view.findViewById(R.id.et_guess)
         paintView.addOnLayoutChangeListener { _, left, top, right, bottom, leftWas, topWas, rightWas, bottomWas ->
             if (paintView.visibility != View.VISIBLE) return@addOnLayoutChangeListener
             val widthWas = rightWas - leftWas
@@ -192,7 +229,24 @@ class GameFragment : Fragment() {
             val widthNow = right - left
             val heightNow = bottom - top
             paintView.onLayoutChange(widthWas, widthNow, heightWas, heightNow)
+            if (guessAdapter.messages.isNotEmpty())
+                lifecycleScope.launch { rvGuesses.smoothScrollToPosition(guessAdapter.messages.size - 1) }
         }
+        llSelectedWord = view.findViewById(R.id.ll_selected_word)
+
+        etGuess = view.findViewById(R.id.et_guess)
+        etGuess.setEndIconOnClickListener { sendMessage() }
+        view.findViewById<TextInputEditText>(R.id.edit_text_guess)
+            .setOnEditorActionListener { _, id, _ ->
+                if (id == EditorInfo.IME_ACTION_SEND) {
+                    sendMessage()
+                    true
+                } else false
+            }
+        rvGuesses = view.findViewById(R.id.rv_guesses)
+        guessAdapter = GuessAdapter(mutableListOf())
+        rvGuesses.adapter = guessAdapter
+        rvGuesses.layoutManager = LinearLayoutManager(context)
     }
 
     private fun showSelectedWord(shouldShowWord: Boolean) {
