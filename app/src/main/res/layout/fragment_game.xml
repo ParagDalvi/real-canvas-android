@@ -1,104 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/scroll"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fillViewport="true"
     tools:context=".ui.GameFragment">
 
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/tv_timer"
-        style="@style/TextAppearance.MaterialComponents.Headline5"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAlignment="center"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/container"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@id/divider"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_timer">
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/view_not_drawing_and_choosing"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="gone">
-
-            <include layout="@layout/layout_not_drawing_and_choosing" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/view_drawing_and_choosing"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="gone">
-
-            <include layout="@layout/layout_drawing_and_choosing" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/drawing_canvas"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="gone">
-
-            <include layout="@layout/layout_drawing_canvas" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <RelativeLayout
-        android:id="@+id/divider"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        app:layout_constraintBottom_toTopOf="@id/messages"
-        app:layout_constraintTop_toBottomOf="@id/container">
+        android:layout_height="wrap_content">
 
         <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/tvText"
-            style="@style/TextAppearance.MaterialComponents.Subtitle1"
-            android:layout_width="wrap_content"
+            android:id="@+id/tv_timer"
+            style="@style/TextAppearance.MaterialComponents.Headline5"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:text="@string/messages"
-            android:textColor="@color/color_secondary" />
+            android:textAlignment="center"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <View
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/container"
             android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_centerVertical="true"
-            android:layout_marginStart="16dp"
-            android:layout_toStartOf="@id/tvText"
-            android:background="@color/color_secondary" />
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toTopOf="@id/et_guess"
+            app:layout_constraintHeight_max="0dp"
+            app:layout_constraintHeight_min="0dp"
+            app:layout_constraintHeight_percent="0.8"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_timer">
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_centerVertical="true"
-            android:layout_marginEnd="16dp"
-            android:layout_toEndOf="@id/tvText"
-            android:background="@color/color_secondary" />
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/view_not_drawing_and_choosing"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone">
 
-    </RelativeLayout>
+                <include layout="@layout/layout_not_drawing_and_choosing" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/messages"
-        android:name="app.web.realcanvas.ui.MessageFragment"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/divider" />
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/view_drawing_and_choosing"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone">
 
+                <include layout="@layout/layout_drawing_and_choosing" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/drawing_canvas"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone">
+
+                <include layout="@layout/layout_drawing_canvas" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/et_guess"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="@string/guess"
+            app:endIconContentDescription="Send"
+            app:endIconDrawable="@drawable/ic_send"
+            app:endIconMode="custom"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edit_text_message"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:imeOptions="actionSend"
+                android:inputType="textCapSentences|textNoSuggestions|textVisiblePassword" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

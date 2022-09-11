@@ -17,6 +17,7 @@ import app.web.realcanvas.models.DrawPoints
 import app.web.realcanvas.models.WhatsHappening
 import app.web.realcanvas.viewmodels.GameViewModel
 import com.google.android.material.card.MaterialCardView
+import com.google.android.material.textfield.TextInputLayout
 
 class GameFragment : Fragment() {
     private lateinit var gameViewModel: GameViewModel
@@ -42,6 +43,8 @@ class GameFragment : Fragment() {
     private lateinit var paintView: PaintView
     private lateinit var buttonsForDrawing: ConstraintLayout
     private lateinit var llSelectedWord: LinearLayout
+
+    private lateinit var etGuess: TextInputLayout
 
     private var currentlySelectedWordIndex: Int? = null
 
@@ -180,6 +183,16 @@ class GameFragment : Fragment() {
         paintView = view.findViewById(R.id.paint_view)
         paintView.init(this)
         llSelectedWord = view.findViewById(R.id.ll_selected_word)
+
+        etGuess = view.findViewById(R.id.et_guess)
+        paintView.addOnLayoutChangeListener { _, left, top, right, bottom, leftWas, topWas, rightWas, bottomWas ->
+            if (paintView.visibility != View.VISIBLE) return@addOnLayoutChangeListener
+            val widthWas = rightWas - leftWas
+            val heightWas = bottomWas - topWas
+            val widthNow = right - left
+            val heightNow = bottom - top
+            paintView.onLayoutChange(widthWas, widthNow, heightWas, heightNow)
+        }
     }
 
     private fun showSelectedWord(shouldShowWord: Boolean) {

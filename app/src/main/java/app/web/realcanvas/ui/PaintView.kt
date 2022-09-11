@@ -55,6 +55,14 @@ class PaintView(context: Context, attrs: AttributeSet) : View(context, attrs) {
         invalidate()
     }
 
+    fun onLayoutChange(widthWas: Int, widthNow: Int, heightWas: Int, heightNow: Int) {
+        drawingPoints.map {
+            it.x = widthNow * it.x / widthWas
+            it.y = heightNow * it.y / heightWas
+        }
+        updateDrawing(drawingPoints)
+    }
+
     fun undo(shouldUpdateOthers: Boolean = false) {
         drawingPoints.dropLast(20).also {
             drawingPoints.clear()

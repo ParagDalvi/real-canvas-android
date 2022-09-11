@@ -9,8 +9,9 @@
         <entry key="app/src/main/res/drawable/shape_circle.xml" value="0.1505" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.25" />
         <entry key="app/src/main/res/layout/dialog_winner.xml" value="0.24479166666666666" />
-        <entry key="app/src/main/res/layout/fragment_game.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/fragment_game.xml" value="0.1" />
         <entry key="app/src/main/res/layout/fragment_game_new.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/fragment_game_test.xml" value="0.25" />
         <entry key="app/src/main/res/layout/fragment_home.xml" value="0.24479166666666666" />
         <entry key="app/src/main/res/layout/fragment_lobby.xml" value="0.22554347826086957" />
         <entry key="app/src/main/res/layout/fragment_lobby_test.xml" value="0.23108825683593748" />
