@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import app.web.realcanvas.R
 import app.web.realcanvas.models.Message
+import app.web.realcanvas.models.MessageType
 
 class GuessAdapter(
     val messages: MutableList<Message>,
@@ -28,8 +29,19 @@ class GuessAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val message = messages[position]
-        val text = "${message.userName}: ${message.message}"
-        holder.tvGuess.text = text
+
+        if (message.type == MessageType.GUESS_SUCCESS) {
+            val text = "${message.userName} is correct"
+            holder.tvGuess.setBackgroundResource(R.color.correct_guess)
+            holder.tvGuess.textAlignment = View.TEXT_ALIGNMENT_CENTER
+            holder.tvGuess.text = text
+        } else {
+            val text = "${message.userName}: ${message.message}"
+//            holder.tvGuess.setBackgroundResource(R.color.correct_guess)
+            holder.tvGuess.background = null
+            holder.tvGuess.textAlignment = View.TEXT_ALIGNMENT_TEXT_START
+            holder.tvGuess.text = text
+        }
     }
 
     override fun getItemCount(): Int = messages.size

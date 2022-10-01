@@ -11,14 +11,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/tv_timer"
-            style="@style/TextAppearance.MaterialComponents.Headline5"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/view_selected_word_and_timer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAlignment="center"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent">
+
+            <include layout="@layout/layout_selected_word_and_timer" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/container"
@@ -28,7 +28,7 @@
             app:layout_constraintHeight_percent="0.8"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_timer">
+            app:layout_constraintTop_toBottomOf="@id/view_selected_word_and_timer">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/view_not_drawing_and_choosing"

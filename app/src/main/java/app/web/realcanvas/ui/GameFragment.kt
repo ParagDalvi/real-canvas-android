@@ -155,6 +155,7 @@ class GameFragment : Fragment() {
     }
 
     private fun isDrawingAndChoosingUi() {
+        llSelectedWord.visibility = View.INVISIBLE
         etGuess.visibility = View.GONE
         drawingCanvas.visibility = View.GONE
         viewDrawingAndChoosing.visibility = View.VISIBLE
@@ -164,6 +165,7 @@ class GameFragment : Fragment() {
     }
 
     private fun isNotDrawingAndChoosingUi() {
+        llSelectedWord.visibility = View.INVISIBLE
         etGuess.visibility = View.GONE
         viewDrawingAndChoosing.visibility = View.GONE
         drawingCanvas.visibility = View.GONE
@@ -176,6 +178,7 @@ class GameFragment : Fragment() {
     }
 
     private fun isNotDrawingAndGuessingUi() {
+        llSelectedWord.visibility = View.VISIBLE
         etGuess.visibility = View.VISIBLE
         viewDrawingAndChoosing.visibility = View.GONE
         viewNotDrawingAndChoosing.visibility = View.GONE
@@ -186,6 +189,7 @@ class GameFragment : Fragment() {
     }
 
     private fun isDrawingAndDrawingUi() {
+        llSelectedWord.visibility = View.VISIBLE
         etGuess.visibility = View.GONE
         viewDrawingAndChoosing.visibility = View.GONE
         viewNotDrawingAndChoosing.visibility = View.GONE
@@ -257,14 +261,14 @@ class GameFragment : Fragment() {
             val tv: TextView = view.findViewById(R.id.tv_alphabet)
             val dash: View = view.findViewById(R.id.dash)
 
-            if (char == ' ') dash.visibility = View.GONE
+            if (char == ' ') dash.visibility = View.INVISIBLE
             else dash.visibility = View.VISIBLE
 
             if (shouldShowWord) {
                 tv.visibility = View.VISIBLE
                 tv.text = "$char"
             } else {
-                tv.visibility = View.GONE
+                tv.visibility = View.INVISIBLE
             }
             llSelectedWord.addView(view)
         }

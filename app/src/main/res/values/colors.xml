@@ -11,4 +11,5 @@
 
     <color name="canvas">#FFDEB4</color>
     <color name="grey">#807979</color>
+    <color name="correct_guess">#00FF00</color>
 </resources>
